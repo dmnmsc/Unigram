@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Unigram.Core;
 
 namespace Unigram.Controls
 {
@@ -93,12 +94,12 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            UnigramContainer.Instance.ResolveType<ITelegramEventAggregator>().Subscribe(this);
+            UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Subscribe(this);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnigramContainer.Instance.ResolveType<ITelegramEventAggregator>().Unsubscribe(this);
+            UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Unsubscribe(this);
         }
 
         protected override void OnApplyTemplate()
@@ -374,8 +375,9 @@ namespace Unigram.Controls
 
         private void UpdateInlineBot(bool fast)
         {
+            var text = Text;
             var command = string.Empty;
-            var inline = SearchInlineBotResults(Text, out command);
+            var inline = SearchInlineBotResults(text, out command);
             if (inline && fast)
             {
                 ViewModel.GetInlineBotResults(command);
@@ -385,6 +387,23 @@ namespace Unigram.Controls
                 ViewModel.CurrentInlineBot = null;
                 ViewModel.InlineBotResults = null;
                 InlinePlaceholderText = string.Empty;
+
+                if (fast)
+                {
+                    // TODO: verify if it is actually a sticker
+                    if (text.Length < 14 && !string.IsNullOrWhiteSpace(text))
+                    {
+                        ViewModel.StickerPack = DatabaseContext.Current.SelectStickerPack(text.Trim());
+                    }
+                    else
+                    {
+                        ViewModel.StickerPack = null;
+                    }
+                }
+                else
+                {
+                    ViewModel.StickerPack = null;
+                }
             }
         }
 

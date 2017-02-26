@@ -57,7 +57,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Required;
-            DataContext = UnigramContainer.Instance.ResolveType<MainViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
 
             _logicalDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
 
@@ -68,14 +68,6 @@ namespace Unigram.Views
             searchInit();
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
-
-#if DEBUG
-            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Desktop"))
-            {
-                FindName("Toolbar");
-                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-            }
-#endif
         }
 
         private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
