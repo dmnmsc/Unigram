@@ -714,7 +714,7 @@ namespace Unigram.ViewModels
 
             //Aggregator.Publish("PORCODIO");
 
-            //StickersRecent();
+            StickersRecent();
             //GifsSaved();
 
             //var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
