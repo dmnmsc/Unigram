@@ -758,19 +758,6 @@ namespace Unigram.ViewModels
             });
         }
 
-        private async void StickersRecent()
-        {
-            var response = await ProtoService.GetRecentStickersAsync(false, 0);
-            if (response.IsSucceeded)
-            {
-                var recent = response.Result as TLMessagesRecentStickers;
-                if (recent != null)
-                {
-                    await StickersAll(recent);
-                }
-            }
-        }
-
         private async void ShowPinnedMessage(TLChannel channel)
         {
             if (channel == null) return;
@@ -803,6 +790,19 @@ namespace Unigram.ViewModels
                 else
                 {
                     Telegram.Api.Helpers.Execute.ShowDebugMessage("channels.getMessages error " + result.Error);
+                }
+            }
+        }
+
+        private async void StickersRecent()
+        {
+            var response = await ProtoService.GetRecentStickersAsync(false, 0);
+            if (response.IsSucceeded)
+            {
+                var recent = response.Result as TLMessagesRecentStickers;
+                if (recent != null)
+                {
+                    await StickersAll(recent);
                 }
             }
         }
@@ -2011,38 +2011,102 @@ namespace Unigram.ViewModels
                         //SavedGifs.Clear();
                         //SavedGifs.AddRange(gifs);
 
-                        var old = SavedGifs.ToArray();
-                        if (old.Length > 0)
+                        if (SavedGifs.Count > 0)
                         {
-                            var order = new Dictionary<int, int>();
-                            for (int i = 0; i < old.Length; i++)
+                            for (int i = 0; i < gifs.Count; i++)
                             {
-                                order[i] = -1;
+                                var user = gifs[i];
+                                var index = -1;
+
+                                for (int j = 0; j < SavedGifs.Count; j++)
+                                {
+                                    if (SavedGifs[j].Id == user.Id)
+                                    {
+                                        index = j;
+                                        break;
+                                    }
+                                }
+
+                                if (index > -1 && index != i)
+                                {
+                                    SavedGifs.RemoveAt(index);
+                                    SavedGifs.Insert(Math.Min(i, SavedGifs.Count), user);
+                                }
+                                else if (index == -1)
+                                {
+                                    SavedGifs.Insert(Math.Min(i, SavedGifs.Count), user);
+                                }
+                            }
+
+                            for (int i = 0; i < SavedGifs.Count; i++)
+                            {
+                                var user = SavedGifs[i];
+                                var index = -1;
 
                                 for (int j = 0; j < gifs.Count; j++)
                                 {
-                                    if (old[i].Id == gifs[j].Id)
+                                    if (gifs[j].Id == user.Id)
                                     {
-                                        order[i] = j;
+                                        index = j;
+                                        break;
                                     }
                                 }
-                            }
 
-                            for (int j = 0; j < gifs.Count; j++)
-                            {
-                                if (order.ContainsKey(j) == false)
+                                if (index == -1)
                                 {
-                                    order[j] = j;
+                                    SavedGifs.Remove(user);
+                                    i--;
                                 }
                             }
-
-                            Debugger.Break();
                         }
                         else
                         {
                             SavedGifs.Clear();
                             SavedGifs.AddRange(gifs);
                         }
+
+                        //var old = SavedGifs.ToArray();
+                        //if (old.Length > 0)
+                        //{
+                        //    var order = new Dictionary<int, int>();
+                        //    for (int i = 0; i < old.Length; i++)
+                        //    {
+                        //        order[i] = -1;
+
+                        //        for (int j = 0; j < gifs.Count; j++)
+                        //        {
+                        //            if (old[i].Id == gifs[j].Id)
+                        //            {
+                        //                order[i] = j;
+                        //                break;
+                        //            }
+                        //        }
+                        //    }
+
+                        //    //for (int j = 0; j < order.First().Value; j++)
+                        //    //{
+                        //    //    if (order.ContainsKey(j) == false)
+                        //    //    {
+                        //    //        order[j] = j;
+                        //    //    }
+                        //    //}
+
+                        //    foreach (var item in order)
+                        //    {
+                        //        if (item.Key != item.Value)
+                        //        {
+                        //            SavedGifs.RemoveAt(item.Key);
+                        //            SavedGifs.Insert(item.Value, gifs[item.Value]);
+                        //        }
+                        //    }
+
+                        //    //Debugger.Break();
+                        //}
+                        //else
+                        //{
+                        //    SavedGifs.Clear();
+                        //    SavedGifs.AddRange(gifs);
+                        //}
                     });
                 }
             });
