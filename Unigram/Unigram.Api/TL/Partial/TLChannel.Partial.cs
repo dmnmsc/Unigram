@@ -50,6 +50,14 @@ namespace Telegram.Api.TL
             }
         }
 
+        public object PhotoSelf
+        {
+            get
+            {
+                return this;
+            }
+        }
+
         public override void Update(TLChatBase chatBase)
         {
             base.Update(chatBase);

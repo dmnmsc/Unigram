@@ -1203,6 +1203,8 @@ namespace Telegram.Api.Services.Updates
                                 commonMessage.SetUnreadSilent(true);
                             }
                         }
+
+                        ProcessNewMessageUpdate(updateNewChannelMessage.Message);
                     }
 
                     _cacheService.SyncMessage(updateNewChannelMessage.Message, notifyNewMessage, notifyNewMessage,
@@ -1299,6 +1301,8 @@ namespace Telegram.Api.Services.Updates
                                 }
                             });
                     }
+
+                    ProcessNewMessageUpdate(updateNewMessage.Message);
                 }
 
                 return true;
@@ -1800,7 +1804,7 @@ namespace Telegram.Api.Services.Updates
                 }
 
                 user.Photo = userPhoto.Photo;
-                user.PhotoSelf = user;
+                user.RaisePropertyChanged(() => user.PhotoSelf);
                 Helpers.Execute.BeginOnThreadPool(() => _eventAggregator.Publish(userPhoto));
                 //_cacheService.SyncUser(user, result => _eventAggregator.Publish(result));
 
@@ -2149,6 +2153,61 @@ namespace Telegram.Api.Services.Updates
                 if (readMaxId.ReadInboxMaxId == null || readMaxId.ReadInboxMaxId < maxId)
                 {
                     readMaxId.ReadInboxMaxId = maxId;
+                }
+            }
+        }
+
+        private void ProcessNewMessageUpdate(TLMessageBase messageBase)
+        {
+            var serviceMessage = messageBase as TLMessageService;
+            if (serviceMessage != null)
+            {
+                var chatEditPhotoAction = serviceMessage.Action as TLMessageActionChatEditPhoto;
+                if (chatEditPhotoAction != null)
+                {
+                    //channel.Photo = chatEditPhotoAction.Photo;
+                    var photo = chatEditPhotoAction.Photo as TLPhoto;
+                    if (photo != null)
+                    {
+                        var small = photo.Thumb as TLPhotoSize;
+                        var big = photo.Full as TLPhotoSize;
+
+                        var chatBase = _cacheService.GetChat(serviceMessage.ToId.Id);
+
+                        var channel = chatBase as TLChannel;
+                        if (channel != null)
+                        {
+                            channel.Photo = new TLChatPhoto { PhotoSmall = small.Location, PhotoBig = big.Location };
+                            channel.RaisePropertyChanged(() => channel.PhotoSelf);
+                        }
+
+                        var chat = chatBase as TLChat;
+                        if (chat != null)
+                        {
+                            chat.Photo = new TLChatPhoto { PhotoSmall = small.Location, PhotoBig = big.Location };
+                            chat.RaisePropertyChanged(() => chat.PhotoSelf);
+                        }
+                    }
+                }
+
+                var chatDeletePhotoAction = serviceMessage.Action as TLMessageActionChatDeletePhoto;
+                if (chatDeletePhotoAction != null)
+                {
+                    var chatBase = _cacheService.GetChat(serviceMessage.ToId.Id);
+
+                    var channel = chatBase as TLChannel;
+                    if (channel != null)
+                    {
+                        channel.Photo = new TLChatPhotoEmpty();
+                        channel.RaisePropertyChanged(() => channel.PhotoSelf);
+                    }
+
+                    var chat = chatBase as TLChat;
+                    if (chat != null)
+                    {
+                        chat.Photo = new TLChatPhotoEmpty();
+                        chat.RaisePropertyChanged(() => chat.PhotoSelf);
+                    }
                 }
             }
         }
