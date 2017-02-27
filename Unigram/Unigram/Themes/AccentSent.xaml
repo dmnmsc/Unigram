@@ -6,8 +6,8 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="White"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#2B333B"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="Transparent"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="Transparent"/> <!--Color="#2B333B"/>-->
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="Gray"/> <!--Color="Transparent"/>-->
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
