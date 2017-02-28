@@ -42,6 +42,7 @@ using Windows.Storage.FileProperties;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
+using Telegram.Api.TL.Methods.Messages;
 
 namespace Unigram.ViewModels
 {
@@ -2240,8 +2241,8 @@ namespace Unigram.ViewModels
         {
             base.InsertItem(index, item);
 
-            var next = index > 0 ? this[index - 1] : null;
-            var previous = index < Count - 1 ? this[index + 1] : null;
+            var previous = index > 0 ? this[index - 1] : null;
+            var next = index < Count - 1 ? this[index + 1] : null;
 
             //if (next is TLMessageEmpty)
             //{
@@ -2252,11 +2253,11 @@ namespace Unigram.ViewModels
             //    previous = index < Count - 2 ? this[index + 2] : null;
             //}
 
-            UpdateSeparatorOnInsert(item, previous, index);
-            UpdateSeparatorOnInsert(next, item, index - 1);
+            UpdateSeparatorOnInsert(item, next, index);
+            UpdateSeparatorOnInsert(previous, item, index - 1);
 
-            UpdateAttach(previous, item, index + 1);
-            UpdateAttach(item, next, index);
+            UpdateAttach(next, item, index + 1);
+            UpdateAttach(item, previous, index);
         }
 
         protected override void RemoveItem(int index)
@@ -2323,7 +2324,15 @@ namespace Unigram.ViewModels
 
         private void UpdateAttach(TLMessageBase item, TLMessageBase previous, int index)
         {
-            if (item == null) return;
+            if (item == null)
+            {
+                if (previous != null)
+                {
+                    previous.IsLast = true;
+                }
+
+                return;
+            }
 
             var oldFirst = item.IsFirst;
             var isItemPost = false;
@@ -2345,10 +2354,20 @@ namespace Unigram.ViewModels
                 }
 
                 item.IsFirst = !attach;
+
+                if (previous != null)
+                {
+                    previous.IsLast = item.IsFirst;
+                }
             }
             else
             {
                 item.IsFirst = true;
+                
+                if (previous != null)
+                {
+                    previous.IsLast = false;
+                }
             }
 
             //if (item.IsFirst && item is TLMessage)

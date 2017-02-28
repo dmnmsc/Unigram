@@ -56,6 +56,8 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        protected TLMessage _oldValue;
+
         //public MessageControlBase()
         //{
         //    DataContextChanged += (s, args) =>
@@ -231,7 +233,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        protected void Reply_Tapped(object sender, TappedRoutedEventArgs e)
+        protected void Reply_Click(object sender, RoutedEventArgs e)
         {
             Context.MessageOpenReplyCommand.Execute(ViewModel);
         }
