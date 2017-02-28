@@ -264,8 +264,8 @@
                                              HorizontalAlignment="Left" 
                                              VerticalAlignment="Top"  
                                              Margin="12,12,0,0"
-                                             Width="36"
-                                             Height="36"/>
+                                             Width="32"
+                                             Height="32"/>
 
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -381,8 +381,8 @@
                                              HorizontalAlignment="Left" 
                                              VerticalAlignment="Top"  
                                              Margin="12,12,0,0"
-                                             Width="36"
-                                             Height="36"/>
+                                             Width="32"
+                                             Height="32"/>
                 <messages:FriendMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>
