@@ -708,7 +708,7 @@ namespace Unigram.ViewModels
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
             }
 
-            //StickersRecent();
+            StickersRecent();
             //GifsSaved();
 
             //var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
@@ -2068,7 +2068,7 @@ namespace Unigram.ViewModels
                 }
             });
 
-            return;
+            //return;
 
             Execute.BeginOnThreadPool(async () =>
             {
