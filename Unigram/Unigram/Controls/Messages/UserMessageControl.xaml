@@ -11,8 +11,8 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
-    MaxWidth="430">
+    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+    <!--//MaxWidth="430"-->
 
     <!-- TODO: not the right way -->
     <Border Height="8"  Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
