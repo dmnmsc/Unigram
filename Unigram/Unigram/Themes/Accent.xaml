@@ -42,8 +42,8 @@
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
-            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="Transparent"/>
+            <SolidColorBrush x:Key="MessageBorderBrush" Color="Transparent"/> <!--Color="#29748ea2"/>-->
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
 
