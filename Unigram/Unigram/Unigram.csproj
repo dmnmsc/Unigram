@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Unigram</RootNamespace>
     <AssemblyName>Unigram</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
+    <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
@@ -102,8 +102,15 @@
     <Compile Include="Controls\DialogSearchBar.xaml.cs">
       <DependentUpon>DialogSearchBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\CallMessageControlBase.cs" />
+    <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
+      <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\MessageStatusControl.xaml.cs">
       <DependentUpon>MessageStatusControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\UserCallMessageControl.xaml.cs">
+      <DependentUpon>UserCallMessageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
@@ -112,6 +119,7 @@
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
@@ -434,8 +442,9 @@
     </AppxManifest>
     <PRIResource Include="Strings\en\Resources.resw">
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>MockedReswFileCodeGenerator</Generator>
+      <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Resources.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
@@ -563,7 +572,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Messages\HistoryCallMessageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Messages\MessageStatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\UserCallMessageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
