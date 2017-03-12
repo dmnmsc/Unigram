@@ -257,13 +257,13 @@
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="3"
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
+                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
-                                             VerticalAlignment="Top"  
-                                             Margin="12,12,0,0"
-                                             Width="36"
-                                             Height="36"/>
+                                             VerticalAlignment="Bottom"  
+                                             Margin="12,0,0,4"
+                                             Width="32"
+                                             Height="32"/>
 
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -371,13 +371,13 @@
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="3"
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
+                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
-                                             VerticalAlignment="Top"  
-                                             Margin="12,12,0,0"
-                                             Width="36"
-                                             Height="36"/>
+                                             VerticalAlignment="Bottom"  
+                                             Margin="12,0,0,4"
+                                             Width="32"
+                                             Height="32"/>
                 <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>
