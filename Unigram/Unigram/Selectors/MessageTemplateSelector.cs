@@ -77,27 +77,27 @@ namespace Unigram.Selectors
             {
                 if (message.IsOut && !message.IsPost)
                 {
-                    return UserStickerTemplate;
+                    return ChatFriendStickerTemplate;
                 }
                 else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
                 {
                     return ChatFriendStickerTemplate;
                 }
 
-                return FriendStickerTemplate;
+                return ChatFriendStickerTemplate;
             }
             else
             {
                 if (message.IsOut && !message.IsPost)
                 {
-                    return UserMessageTemplate;
+                    return ChatFriendMessageTemplate;
                 }
                 else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
                 {
                     return ChatFriendMessageTemplate;
                 }
                 
-                return FriendMessageTemplate;
+                return ChatFriendMessageTemplate;
             }
         }
 
