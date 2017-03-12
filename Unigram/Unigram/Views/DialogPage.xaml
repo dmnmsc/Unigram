@@ -253,7 +253,7 @@
         <DataTemplate x:Key="ChatFriendStickerTemplate" x:DataType="models:TLMessage">
             <Grid Margin="-52,0,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="52"/>
+                    <ColumnDefinition Width="40"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="3"
@@ -262,9 +262,9 @@
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
                                              VerticalAlignment="Top"  
-                                             Margin="12,12,0,0"
-                                             Width="36"
-                                             Height="36"/>
+                                             Margin="12,32,0,0"
+                                             Width="28"
+                                             Height="28"/>
 
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -367,7 +367,7 @@
         <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
             <Grid Margin="-52,0,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="52"/>
+                    <ColumnDefinition Width="40"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="3"
@@ -376,9 +376,9 @@
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
                                              VerticalAlignment="Top"  
-                                             Margin="12,12,0,0"
-                                             Width="36"
-                                             Height="36"/>
+                                             Margin="12,32,0,0"
+                                             Width="28"
+                                             Height="28"/>
                 <messages:UserMessageControl ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
             </Grid>
         </DataTemplate>
