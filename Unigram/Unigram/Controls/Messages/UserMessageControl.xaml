@@ -73,7 +73,7 @@
             <controls:MediaControl
                 x:Name="MediaControl"
                 Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
-                HorizontalContentAlignment="Stretch"
+                HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Stretch"
                 ContentChanged="OnMediaChanged"
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
