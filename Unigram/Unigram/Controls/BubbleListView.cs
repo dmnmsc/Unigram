@@ -116,7 +116,7 @@ namespace Unigram.Controls
             {
                 if (item is TLMessageService)
                 {
-                    bubble.Padding = new Thickness(52, 0, 4, 0);
+                    bubble.Padding = new Thickness(2, 0, 4, 0);
                 }
                 else
                 {
