@@ -88,7 +88,7 @@ namespace Unigram.Controls.Messages
             var message = DataContext as TLMessage;
             if (message != null)
             {
-                if (message.IsFirst)
+                if (message.IsFirst && !message.IsPost)
                 {
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = message.From?.FullName, Foreground = Convert.Bubble(message.FromId ?? 0) });
