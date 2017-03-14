@@ -15,15 +15,15 @@
     <!--//MaxWidth="432"-->
 
     <!-- TODO: not the right way -->
-    <Border Height="8"  Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+    <Border Height="8" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
         <Grid Margin="{ThemeResource MessageContentMargin}" 
               Padding="{ThemeResource MessageContentPadding}" 
               CornerRadius="{ThemeResource MessageCornerRadius}"
-              BorderThickness="1,1,1,1"
+              Background="{ThemeResource MessageBackgroundBrush}"
               BorderBrush="{ThemeResource MessageBorderBrush}"
-              Background="{ThemeResource MessageBackgroundBrush}">
+              BorderThickness="1,1,1,1">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="FullMedia">

@@ -395,7 +395,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceFriendCallMessageTemplate">
-            <messages:UserCallMessageControl ContextFlyout="{StaticResource ServiceMenuFlyout}"/>
+            <messages:PhoneCallMessageBubble ContextFlyout="{StaticResource ServiceMenuFlyout}"/>
         </DataTemplate>
 
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
