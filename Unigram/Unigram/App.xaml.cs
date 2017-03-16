@@ -81,10 +81,10 @@ namespace Unigram
             UnhandledException += async (s, args) =>
             {
                 args.Handled = true;
-                await new MessageDialog(args.Message ?? "Error", args.Exception?.ToString() ?? "Error").ShowAsync();
+                await new MessageDialog(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowAsync();
             };
 
-#if !DEBUG
+//#if !DEBUG
 
             HockeyClient.Current.Configure("7d36a4260af54125bbf6db407911ed3b",
                 new TelemetryConfiguration()
@@ -95,7 +95,7 @@ namespace Unigram
                                  WindowsCollectors.UnhandledException
                 });
 
-#endif
+//#endif
         }
 
         /////// <summary>
