@@ -624,12 +624,12 @@ namespace Unigram.Common
                             return;
                         }
 
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                     else
                     {
                         // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                 }
             }
@@ -643,47 +643,48 @@ namespace Unigram.Common
                 var navigation = (string)data;
                 if (type == TLType.MessageEntityUrl || type == TLType.MessageEntityTextUrl)
                 {
-                    if (navigation.Contains("telegram.me") || navigation.Contains("t.me"))
+                    var url = navigation;
+                    if (url.StartsWith("http") == false)
                     {
-                        HandleTelegramUrl(navigation);
+                        url = "http://" + url;
                     }
-                    else
+
+                    if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                     {
-                        if (message?.Media is TLMessageMediaWebPage webpageMedia)
+                        if (Constants.TelegramHosts.Contains(uri.Host))
                         {
-                            if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
+                            HandleTelegramUrl(navigation);
+                        }
+                        else
+                        {
+                            if (message?.Media is TLMessageMediaWebPage webpageMedia)
                             {
-                                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                                if (service != null)
+                                if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
                                 {
-                                    service.Navigate(typeof(ArticlePage), webpageMedia);
+                                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                                    if (service != null)
+                                    {
+                                        service.Navigate(typeof(ArticlePage), webpageMedia);
+                                        return;
+                                    }
+                                }
+                            }
+
+                            if (type == TLType.MessageEntityTextUrl)
+                            {
+                                var dialog = new TLMessageDialog(navigation, "Open this link?");
+                                dialog.Title = "Open this link?";
+                                dialog.Message = navigation;
+                                dialog.PrimaryButtonText = "Open";
+                                dialog.SecondaryButtonText = "Cancel";
+
+                                var result = await dialog.ShowAsync();
+                                if (result != ContentDialogResult.Primary)
+                                {
                                     return;
                                 }
                             }
-                        }
 
-                        if (type == TLType.MessageEntityTextUrl)
-                        {
-                            var dialog = new TLMessageDialog(navigation, "Open this link?");
-                            dialog.Title = "Open this link?";
-                            dialog.Message = navigation;
-                            dialog.PrimaryButtonText = "Open";
-                            dialog.SecondaryButtonText = "Cancel";
-
-                            var result = await dialog.ShowAsync();
-                            if (result != ContentDialogResult.Primary)
-                            {
-                                return;
-                            }
-                        }
-
-                        if (!navigation.StartsWith("http"))
-                        {
-                            navigation = "http://" + navigation;
-                        }
-
-                        if (Uri.TryCreate(navigation, UriKind.Absolute, out Uri uri))
-                        {
                             await Launcher.LaunchUriAsync(uri);
                         }
                     }
@@ -807,7 +808,7 @@ namespace Unigram.Common
 
                 var accessToken = GetAccessToken(query, out PageKind pageKind);
                 var post = GetPost(query);
-                var result = url.StartsWith("https://") ? url : ("https://" + url);
+                var result = url.StartsWith("http") ? url : ("https://" + url);
 
                 if (Uri.TryCreate(result, UriKind.Absolute, out Uri uri))
                 {
@@ -886,12 +887,12 @@ namespace Unigram.Common
                             return;
                         }
 
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                     else
                     {
                         // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowAsync();
+                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
 
                     //mtProtoService.ResolveUsernameAsync(new TLString(username), delegate (TLResolvedPeer result)
