@@ -98,12 +98,14 @@
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
+    <Compile Include="Controls\BottomSheet.cs" />
     <Compile Include="Controls\DebugToolbar.xaml.cs">
       <DependentUpon>DebugToolbar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DialogSearchBar.xaml.cs">
       <DependentUpon>DialogSearchBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MenuFlyoutLazyItem.cs" />
     <Compile Include="Controls\Messages\PhoneCallMessageBubble.cs" />
     <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
       <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
@@ -118,6 +120,9 @@
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\TLListView.cs" />
+    <Compile Include="Controls\Views\JoinChatView.xaml.cs">
+      <DependentUpon>JoinChatView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\StickerSetView.xaml.cs">
       <DependentUpon>StickerSetView.xaml</DependentUpon>
     </Compile>
@@ -131,6 +136,7 @@
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
+    <Compile Include="ViewModels\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
@@ -597,6 +603,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\EditYourNameView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\JoinChatView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
