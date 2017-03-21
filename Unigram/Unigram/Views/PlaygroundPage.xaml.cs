@@ -17,6 +17,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Dependency;
 using Unigram.Native;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
@@ -104,6 +105,12 @@ namespace Unigram.Views
         private void Slide_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             //BackgroundCanvas.Invalidate();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var service = new StickersService();
+            //StickersService.loadRecents(StickersService.TYPE_IMAGE, false, true);
         }
     }
 

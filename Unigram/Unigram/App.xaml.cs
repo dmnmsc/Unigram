@@ -133,7 +133,7 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(BlankPage1));
+            //NavigationService.Navigate(typeof(PlaygroundPage));
             //return Task.CompletedTask;
 
             //ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
