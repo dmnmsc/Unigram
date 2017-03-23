@@ -36,18 +36,6 @@ namespace Unigram.Controls.Views
             var scrollingHost = GifsView.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
             if (scrollingHost != null)
             {
-                // Source: https://github.com/JustinXinLiu/StickyHeader_WindowsComposition
-                // Thanks Justin! :D
-
-                var scrollProperties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollingHost);
-                var stickyHeaderVisual = ElementCompositionPreview.GetElementVisual(StickyHeader);
-                var compositor = scrollProperties.Compositor;
-
-                var scrollingAnimation = compositor.CreateExpressionAnimation("ScrollingProperties.Translation.Y > OffsetY ? 0 : OffsetY - ScrollingProperties.Translation.Y");
-                scrollingAnimation.SetReferenceParameter("ScrollingProperties", scrollProperties);
-                scrollingAnimation.SetScalarParameter("OffsetY", 0);
-
-                stickyHeaderVisual.StartAnimation("Offset.Y", scrollingAnimation);
             }
         }
 
@@ -108,6 +96,16 @@ namespace Unigram.Controls.Views
                     }
                 }
             }
+        }
+
+        private async void Featured_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            await StickerSetView.Current.ShowAsync(((TLStickerSetCoveredBase)e.ClickedItem).Set);
+        }
+
+        private void Featured_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

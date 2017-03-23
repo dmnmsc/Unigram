@@ -31,6 +31,7 @@ namespace Unigram.ViewModels
             _stickersService = stickersService;
             _stickersService.RecentsDidLoaded += OnRecentsDidLoaded;
             _stickersService.StickersDidLoaded += OnStickersDidLoaded;
+            _stickersService.FeaturedStickersDidLoaded += OnFeaturedStickersDidLoaded;
 
             _gifsService = gifsService;
 
@@ -44,6 +45,7 @@ namespace Unigram.ViewModels
             };
 
             SavedGifs = new ObservableCollection<TLDocument>();
+            FeaturedStickers = new ObservableCollection<TLStickerSetMultiCovered>();
             SavedStickers = new ObservableCollection<TLMessagesStickerSet>();
         }
 
@@ -69,7 +71,10 @@ namespace Unigram.ViewModels
                         SavedStickers.RemoveAt(0);
                     }
 
-                    SavedStickers.Insert(0, _frequentlyUsed);
+                    if (_frequentlyUsed.Documents.Count > 0)
+                    {
+                        SavedStickers.Insert(0, _frequentlyUsed);
+                    }
 
                     //var set = new TLMessagesStickerSet
                     //{
@@ -106,8 +111,28 @@ namespace Unigram.ViewModels
             }
         }
 
+        private void OnFeaturedStickersDidLoaded(object sender, FeaturedStickersDidLoadedEventArgs e)
+        {
+            var stickers = _stickersService.GetFeaturedStickerSets();
+            Execute.BeginOnUIThread(() =>
+            {
+                FeaturedStickers.Clear();
+
+                foreach (var set in stickers)
+                {
+                    FeaturedStickers.Add(new TLStickerSetMultiCovered
+                    {
+                        Set = set.Set,
+                        Covers = new TLVector<TLDocumentBase>(set.Documents.Take(Math.Min(set.Documents.Count, 5)))
+                    });
+                }
+            });
+        }
+
         public int SavedGifsHash { get; private set; }
         public ObservableCollection<TLDocument> SavedGifs { get; private set; }
+
+        public ObservableCollection<TLStickerSetMultiCovered> FeaturedStickers { get; private set; }
 
         public ObservableCollection<TLMessagesStickerSet> SavedStickers { get; private set; }
 

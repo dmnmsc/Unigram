@@ -29,7 +29,7 @@ namespace Unigram.ViewModels.Settings
             _stickersService = stickersService;
             _stickersService.FeaturedStickersDidLoaded += OnFeaturedStickersDidLoaded;
 
-            Items = new ObservableCollection<TLStickerSetCoveredBase>();
+            Items = new ObservableCollection<TLMessagesStickerSet>();
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -39,7 +39,6 @@ namespace Unigram.ViewModels.Settings
                 Execute.BeginOnThreadPool(() =>
                 {
                     _stickersService.CheckFeaturedStickers();
-                    ProcessStickerSets();
                 });
             }
 
@@ -60,6 +59,6 @@ namespace Unigram.ViewModels.Settings
             });
         }
 
-        public ObservableCollection<TLStickerSetCoveredBase> Items { get; private set; }
+        public ObservableCollection<TLMessagesStickerSet> Items { get; private set; }
     }
 }
