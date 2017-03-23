@@ -38,7 +38,8 @@ namespace Unigram.ViewModels.Settings
             {
                 Execute.BeginOnThreadPool(() =>
                 {
-                    _stickersService.CheckFeaturedStickers();
+                    var featured = _stickersService.CheckFeaturedStickers();
+                    if (featured) ProcessStickerSets();
                 });
             }
 
