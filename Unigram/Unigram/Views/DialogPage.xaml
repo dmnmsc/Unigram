@@ -160,7 +160,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst), Mode=OneWay}"/>
+                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}" 
                             Background="{ThemeResource MessageServiceBackgroundBrush}" 
@@ -210,7 +210,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst), Mode=OneWay}"/>
+                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
                     <controls:StickerView
@@ -261,7 +261,7 @@
                                              Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
-                                             VerticalAlignment="Top"  
+                                             VerticalAlignment="Top"
                                              Margin="12,10,0,0"
                                              Width="32"
                                              Height="32"/>
@@ -276,7 +276,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <!-- TODO: not the right way -->
-                    <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst), Mode=OneWay}"/>
+                    <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                     <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
                         <controls:StickerView
@@ -375,7 +375,7 @@
                                              Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left" 
-                                             VerticalAlignment="Top"  
+                                             VerticalAlignment="Top"
                                              Margin="12,10,0,0"
                                              Width="32"
                                              Height="32"/>
