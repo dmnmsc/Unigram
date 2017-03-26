@@ -15,6 +15,9 @@ using Unigram.Core;
 using Unigram.Services;
 using Windows.UI.Popups;
 using Template10.Utils;
+using Unigram.Core.Common;
+using Template10.Mvvm;
+using System.ComponentModel;
 
 namespace Unigram.ViewModels
 {
@@ -23,6 +26,11 @@ namespace Unigram.ViewModels
         public readonly IStickersService _stickersService;
 
         private TLMessagesStickerSet _frequentlyUsed;
+
+        private bool _recentGifs;
+        private bool _recentStickers;
+        private bool _featured;
+        private bool _stickers;
 
         public DialogStickersViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService)
             : base(protoService, cacheService, aggregator)
@@ -42,8 +50,11 @@ namespace Unigram.ViewModels
             };
 
             SavedGifs = new ObservableCollection<TLDocument>();
-            FeaturedStickers = new ObservableCollection<TLStickerSetMultiCovered>();
-            SavedStickers = new ObservableCollection<TLMessagesStickerSet>();
+            FeaturedStickers = new ObservableCollectionEx<TLFeaturedStickerSet>();
+            SavedStickers = new ObservableCollectionEx<TLMessagesStickerSet>();
+
+            SyncStickers();
+            SyncGifs();
         }
 
         public IStickersService StickersService
@@ -60,7 +71,7 @@ namespace Unigram.ViewModels
             {
                 ProcessRecentGifs();
             }
-            else if (e.Type == Services.StickersService.TYPE_IMAGE)
+            else if (e.Type == StickerType.Image)
             {
                 ProcessRecentStickers();
             }
@@ -70,7 +81,7 @@ namespace Unigram.ViewModels
         {
             Debug.WriteLine("StickersDidLoaded");
 
-            if (e.Type == Services.StickersService.TYPE_IMAGE)
+            if (e.Type == StickerType.Image)
             {
                 ProcessStickers();
             }
@@ -92,7 +103,7 @@ namespace Unigram.ViewModels
 
         private void ProcessRecentStickers()
         {
-            var recent = _stickersService.GetRecentStickers(Services.StickersService.TYPE_IMAGE);
+            var recent = _stickersService.GetRecentStickers(StickerType.Image);
             Execute.BeginOnUIThread(() =>
             {
                 _frequentlyUsed.Documents = new TLVector<TLDocumentBase>(recent);
@@ -111,54 +122,54 @@ namespace Unigram.ViewModels
 
         private void ProcessStickers()
         {
-            var stickers = _stickersService.GetStickerSets(Services.StickersService.TYPE_IMAGE);
+            _stickers = true;
+            var stickers = _stickersService.GetStickerSets(StickerType.Image);
             Execute.BeginOnUIThread(() =>
             {
-                for (int i = 1; i < SavedStickers.Count; i++)
-                {
-                    SavedStickers.RemoveAt(i);
-                }
+                SavedStickers.AddRange(stickers, true);
 
-                SavedStickers.AddRange(stickers);
+                if (_frequentlyUsed.Documents.Count > 0)
+                {
+                    SavedStickers.Insert(0, _frequentlyUsed);
+                }
             });
         }
 
         private void ProcessFeaturedStickers()
         {
+            _featured = true;
             var stickers = _stickersService.GetFeaturedStickerSets();
+            var unread = _stickersService.GetUnreadStickerSets();
             Execute.BeginOnUIThread(() =>
             {
-                FeaturedStickers.Clear();
 
-                foreach (var set in stickers)
+                FeaturedUnreadCount = unread.Count;
+                FeaturedStickers.AddRange(stickers.Select(set => new TLFeaturedStickerSet
                 {
-                    FeaturedStickers.Add(new TLStickerSetMultiCovered
-                    {
-                        Set = set.Set,
-                        Covers = new TLVector<TLDocumentBase>(set.Documents.Take(Math.Min(set.Documents.Count, 5)))
-                    });
-                }
+                    Set = set.Set,
+                    IsUnread = unread.Contains(set.Set.Id),
+                    Covers = new TLVector<TLDocumentBase>(set.Documents.Take(Math.Min(set.Documents.Count, 5)))
+                }), true);
             });
         }
 
-        public int SavedGifsHash { get; private set; }
         public ObservableCollection<TLDocument> SavedGifs { get; private set; }
 
-        public ObservableCollection<TLStickerSetMultiCovered> FeaturedStickers { get; private set; }
+        public ObservableCollectionEx<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
 
-        public ObservableCollection<TLMessagesStickerSet> SavedStickers { get; private set; }
+        public ObservableCollectionEx<TLMessagesStickerSet> SavedStickers { get; private set; }
 
         public void SyncStickers()
         {
             Execute.BeginOnThreadPool(() =>
             {
-                _stickersService.LoadRecents(Services.StickersService.TYPE_IMAGE, false, true);
-                var stickers = _stickersService.CheckStickers(Services.StickersService.TYPE_IMAGE);
+                _stickersService.LoadRecents(StickerType.Image, false, true);
+                var stickers = _stickersService.CheckStickers(StickerType.Image);
                 var featured = _stickersService.CheckFeaturedStickers();
 
                 ProcessRecentStickers();
-                if (stickers) ProcessStickers();
-                if (featured) ProcessFeaturedStickers();
+                if (stickers && !_stickers) ProcessStickers();
+                if (featured && !_featured) ProcessFeaturedStickers();
 
                 #region Old
                 //var watch = Stopwatch.StartNew();
@@ -268,7 +279,7 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnThreadPool(() =>
             {
-                _stickersService.LoadRecents(Services.StickersService.TYPE_IMAGE, true, true);
+                _stickersService.LoadRecents(StickerType.Image, true, true);
 
                 ProcessRecentGifs();
 
@@ -382,6 +393,74 @@ namespace Unigram.ViewModels
                 //}
                 #endregion
             });
+        }
+
+        private int _featuredUnreadCount;
+        public int FeaturedUnreadCount
+        {
+            get
+            {
+                return _featuredUnreadCount;
+            }
+            set
+            {
+                Set(ref _featuredUnreadCount, value);
+            }
+        }
+    }
+
+    public class TLFeaturedStickerSet : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public TLStickerSet Set { get; set; }
+
+        private TLVector<TLDocumentBase> _covers;
+        public TLVector<TLDocumentBase> Covers
+        {
+            get
+            {
+                return _covers;
+            }
+            set
+            {
+                _covers = new TLVector<TLDocumentBase>();
+
+                for (int i = 0; i < 5; i++)
+                {
+                    if (i < value.Count)
+                    {
+                        _covers.Add(value[i]);
+                    }
+                    else
+                    {
+                        _covers.Add(null);
+                    }
+                }
+            }
+        }
+
+        private bool _isUnread;
+        public bool IsUnread
+        {
+            get
+            {
+                return _isUnread;
+            }
+            set
+            {
+                _isUnread = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsUnread"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Unread"));
+            }
+        }
+
+        public string Unread
+        {
+            get
+            {
+                return _isUnread ? "\u2022" : string.Empty;
+            }
         }
     }
 }

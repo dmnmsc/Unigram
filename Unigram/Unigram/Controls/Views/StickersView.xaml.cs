@@ -31,12 +31,19 @@ namespace Unigram.Controls.Views
             InitializeComponent();
         }
 
-        private void Gifs_Loaded(object sender, RoutedEventArgs e)
+        private void Gifs_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var scrollingHost = GifsView.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
-            if (scrollingHost != null)
-            {
-            }
+            ViewModel.SendGifCommand.Execute(e.ClickedItem);
+        }
+
+        private async void Featured_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            await StickerSetView.Current.ShowAsync(((TLDocument)e.ClickedItem).StickerSet);
+        }
+
+        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
         }
 
         private void Stickers_Loaded(object sender, RoutedEventArgs e)
@@ -49,16 +56,6 @@ namespace Unigram.Controls.Views
             }
         }
 
-        private void Gifs_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            ViewModel.SendGifCommand.Execute(e.ClickedItem);
-        }
-
-        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
-        }
-
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Pivot.SelectedIndex != 2)
@@ -69,11 +66,20 @@ namespace Unigram.Controls.Views
 
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Pivot.SelectedIndex = 2;
+            if (Toolbar.SelectedItem != null)
+            {
+                Pivot.SelectedIndex = 2;
+            }
+
             //Stickers.ScrollIntoView(((TLMessagesStickerSet)Toolbar.SelectedItem).Documents[0]);
 
             //Pivot.SelectedIndex = Math.Min(1, Toolbar.SelectedIndex);
             //Stickers.ScrollIntoView(ViewModel.StickerSets[Toolbar.SelectedIndex][0]);
+        }
+
+        private void Toolbar_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            Stickers.ScrollIntoView(((TLMessagesStickerSet)e.ClickedItem).Documents[0]);
         }
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -92,16 +98,6 @@ namespace Unigram.Controls.Views
                     }
                 }
             }
-        }
-
-        private async void Featured_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            await StickerSetView.Current.ShowAsync(((TLStickerSetCoveredBase)e.ClickedItem).Set);
-        }
-
-        private void Featured_Loaded(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 
