@@ -8,6 +8,31 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+              Height="{ThemeResource AppBarThemeCompactHeight}">
+            <TextBlock Text="Archived stickers"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       VerticalAlignment="Center"
+                       Margin="12,0"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        </Grid>
 
+        <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                  ItemTemplate="{StaticResource StickerSetItemTemplate}"
+                  ItemClick="ListView_ItemClick"
+                  IsItemClickEnabled="True"
+                  SelectionMode="None"
+                  Grid.Row="1">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="12,0,0,0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
     </Grid>
 </Page>
