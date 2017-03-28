@@ -148,6 +148,7 @@
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginSignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
@@ -168,6 +169,9 @@
     </Compile>
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Login\LoginSignUpPage.xaml.cs">
+      <DependentUpon>LoginSignUpPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsAccountsPage.xaml.cs">
       <DependentUpon>SettingsAccountsPage.xaml</DependentUpon>
@@ -366,8 +370,8 @@
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\FeaturedStickersViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginPasswordViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginPhoneCodeViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginPhoneNumberViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginSentCodeViewModel.cs" />
+    <Compile Include="ViewModels\Login\LoginSignInViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PhotosViewModelBase.cs" />
@@ -419,11 +423,11 @@
     <Compile Include="Views\Login\LoginPasswordPage.xaml.cs">
       <DependentUpon>LoginPasswordPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Login\LoginPhoneCodePage.xaml.cs">
-      <DependentUpon>LoginPhoneCodePage.xaml</DependentUpon>
+    <Compile Include="Views\Login\LoginSentCodePage.xaml.cs">
+      <DependentUpon>LoginSentCodePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Login\LoginPhoneNumberPage.xaml.cs">
-      <DependentUpon>LoginPhoneNumberPage.xaml</DependentUpon>
+    <Compile Include="Views\Login\LoginSignInPage.xaml.cs">
+      <DependentUpon>LoginSignInPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Login\LoginWelcomePage.xaml.cs">
       <DependentUpon>LoginWelcomePage.xaml</DependentUpon>
@@ -767,11 +771,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Login\LoginPhoneCodePage.xaml">
+    <Page Include="Views\Login\LoginSentCodePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Login\LoginPhoneNumberPage.xaml">
+    <Page Include="Views\Login\LoginSignInPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Login\LoginSignUpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
