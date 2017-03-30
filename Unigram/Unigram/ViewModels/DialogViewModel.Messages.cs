@@ -151,6 +151,10 @@ namespace Unigram.ViewModels
                 {
                     dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
                 }
+                else if (Peer is TLInputPeerChannel)
+                {
+                    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
+                }
 
                 var result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
@@ -240,7 +244,7 @@ namespace Unigram.ViewModels
         {
             if (message is TLMessage)
             {
-                App.State.ForwardMessages = new List<TLMessage> { message as TLMessage };
+                App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
                 NavigationService.GoBack();
             }
         }
@@ -306,7 +310,7 @@ namespace Unigram.ViewModels
             var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
-                App.State.ForwardMessages = new List<TLMessage>(messages);
+                App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
                 NavigationService.GoBack();
             }
 
@@ -682,10 +686,26 @@ namespace Unigram.ViewModels
         {
             if (button is TLKeyboardButtonSwitchInline switchInlineButton)
             {
-                return;
-            }
+                var bot = GetBot(message);
+                if (bot != null)
+                {
+                    if (switchInlineButton.IsSamePeer)
+                    {
+                        Text = string.Format("@{0} {1}", bot.Username, switchInlineButton.Query);
+                        ResolveInlineBot(bot.Username, switchInlineButton.Query);
 
-            if (button is TLKeyboardButtonUrl urlButton)
+                        if (With is TLChatBase)
+                        {
+                            Reply = message;
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
+            else if (button is TLKeyboardButtonUrl urlButton)
             {
                 var url = urlButton.Url;
                 if (url.StartsWith("http") == false)
@@ -716,30 +736,59 @@ namespace Unigram.ViewModels
                         await Launcher.LaunchUriAsync(uri);
                     }
                 }
-
-                return;
             }
-
-            if (button is TLKeyboardButtonCallback callbackButton)
+            else if (button is TLKeyboardButtonCallback callbackButton)
             {
                 var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, false);
                 if (response.IsSucceeded && response.Result.HasMessage)
                 {
-                    if (response.Result.IsAlert)
+                    if (response.Result.HasMessage)
                     {
-                        await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        if (response.Result.IsAlert)
+                        {
+                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        }
+                        else
+                        {
+                            // TODO:
+                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        }
                     }
-                    else
+                    else if (response.Result.HasUrl && response.Result.IsHasUrl /* ??? */)
                     {
-                        // TODO:
-                        await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                        var url = response.Result.Url;
+                        if (url.StartsWith("http") == false)
+                        {
+                            url = "http://" + url;
+                        }
+
+                        if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                        {
+                            if (Constants.TelegramHosts.Contains(uri.Host))
+                            {
+                                MessageHelper.HandleTelegramUrl(response.Result.Url);
+                            }
+                            else
+                            {
+                                var dialog = new MessageDialog(response.Result.Url, "Open this link?");
+                                dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
+                                dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
+                                dialog.DefaultCommandIndex = 0;
+                                dialog.CancelCommandIndex = 1;
+
+                                var result = await dialog.ShowQueuedAsync();
+                                if (result == null || (int)result?.Id == 1)
+                                {
+                                    return;
+                                }
+
+                                await Launcher.LaunchUriAsync(uri);
+                            }
+                        }
                     }
                 }
-
-                return;
             }
-
-            if (button is TLKeyboardButtonGame gameButton)
+            else if (button is TLKeyboardButtonGame gameButton)
             {
                 var gameMedia = message.Media as TLMessageMediaGame;
                 if (gameMedia != null)
@@ -749,7 +798,7 @@ namespace Unigram.ViewModels
                     {
                         if (CacheService.GetUser(message.ViaBotId) is TLUser user)
                         {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Username = user.Username, Title = gameMedia.Game.Title });
+                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Title = gameMedia.Game.Title, Username = user.Username });
                         }
                         else
                         {
@@ -757,21 +806,31 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
-
-                return;
             }
-
-            if (button is TLKeyboardButtonRequestPhone requestPhoneButton)
+            else if (button is TLKeyboardButtonRequestPhone requestPhoneButton)
             {
-                return;
+                if (CacheService.GetUser(SettingsHelper.UserId) is TLUser cached)
+                {
+                    var confirm = await TLMessageDialog.ShowAsync("The bot will know your phone number. This can be useful for integration with other services.", "Share your phone number?", "OK", "Cancel");
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        await SendContactAsync(cached);
+                    }
+                }
             }
-
-            if (button is TLKeyboardButtonRequestGeoLocation requestGeoButton)
+            else if (button is TLKeyboardButtonRequestGeoLocation requestGeoButton)
             {
-                return;
+                var confirm = await TLMessageDialog.ShowAsync("This will send your current location to the bot.", "Share your location?", "OK", "Cancel");
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var location = await _locationService.GetPositionAsync();
+                    if (location != null)
+                    {
+                        await SendGeoPointAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
+                    }
+                }
             }
-
-            if (button is TLKeyboardButton keyboardButton)
+            else if (button is TLKeyboardButton keyboardButton)
             {
                 _text = keyboardButton.Text;
                 await SendMessageAsync(null, true);

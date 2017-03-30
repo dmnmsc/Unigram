@@ -99,6 +99,7 @@
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
+    <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
     <Compile Include="Controls\DebugToolbar.xaml.cs">
       <DependentUpon>DebugToolbar.xaml</DependentUpon>
@@ -148,7 +149,7 @@
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginSignUpViewModel.cs" />
+    <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockUserViewModel.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="ViewModels\Settings\SettingsStickersViewModelBase.cs" />
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
     <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
       <DependentUpon>CreateChannelStep2Page.xaml</DependentUpon>
     </Compile>
@@ -170,8 +172,8 @@
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Login\LoginSignUpPage.xaml.cs">
-      <DependentUpon>LoginSignUpPage.xaml</DependentUpon>
+    <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
+      <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsAccountsPage.xaml.cs">
       <DependentUpon>SettingsAccountsPage.xaml</DependentUpon>
@@ -215,9 +217,6 @@
     <Compile Include="Controls\ProfilePictureView.cs" />
     <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
       <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Views\ReplyMarkupView.xaml.cs">
-      <DependentUpon>ReplyMarkupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\StickersView.xaml.cs">
       <DependentUpon>StickersView.xaml</DependentUpon>
@@ -369,10 +368,10 @@
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\FeaturedStickersViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginPasswordViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginSentCodeViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginSignInViewModel.cs" />
-    <Compile Include="ViewModels\Login\LoginWelcomeViewModel.cs" />
+    <Compile Include="ViewModels\SignIn\SignInPasswordViewModel.cs" />
+    <Compile Include="ViewModels\SignIn\SignInSentCodeViewModel.cs" />
+    <Compile Include="ViewModels\SignIn\SignInViewModel.cs" />
+    <Compile Include="ViewModels\SignIn\SignInWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PhotosViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -420,17 +419,17 @@
     <Compile Include="Views\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Login\LoginPasswordPage.xaml.cs">
-      <DependentUpon>LoginPasswordPage.xaml</DependentUpon>
+    <Compile Include="Views\SignIn\SignInPasswordPage.xaml.cs">
+      <DependentUpon>SignInPasswordPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Login\LoginSentCodePage.xaml.cs">
-      <DependentUpon>LoginSentCodePage.xaml</DependentUpon>
+    <Compile Include="Views\SignIn\SignInSentCodePage.xaml.cs">
+      <DependentUpon>SignInSentCodePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Login\LoginSignInPage.xaml.cs">
-      <DependentUpon>LoginSignInPage.xaml</DependentUpon>
+    <Compile Include="Views\SignIn\SignInPage.xaml.cs">
+      <DependentUpon>SignInPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Login\LoginWelcomePage.xaml.cs">
-      <DependentUpon>LoginWelcomePage.xaml</DependentUpon>
+    <Compile Include="Views\SignIn\SignInWelcomePage.xaml.cs">
+      <DependentUpon>SignInWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -470,6 +469,9 @@
     </Compile>
     <Compile Include="Views\ShareTargetPage.xaml.cs">
       <DependentUpon>ShareTargetPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
+      <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Users\UserDetailsPage.xaml.cs">
       <DependentUpon>UserDetailsPage.xaml</DependentUpon>
@@ -659,10 +661,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Views\ReplyMarkupView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Views\SendPhotosView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -767,23 +765,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Login\LoginPasswordPage.xaml">
+    <Page Include="Views\SignIn\SignInPasswordPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Login\LoginSentCodePage.xaml">
+    <Page Include="Views\SignIn\SignInSentCodePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Login\LoginSignInPage.xaml">
+    <Page Include="Views\SignIn\SignInPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Login\LoginSignUpPage.xaml">
+    <Page Include="Views\SignIn\SignUpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Login\LoginWelcomePage.xaml">
+    <Page Include="Views\SignIn\SignInWelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -870,6 +868,10 @@
     <Page Include="Views\SwitchAccountPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Users\UserCommonChatsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Users\UserDetailsPage.xaml">
       <SubType>Designer</SubType>

@@ -26,7 +26,7 @@
     <Page.Resources>
         <CollectionViewSource x:Key="SearchResults" Source="{Binding Dialogs.Search}" IsSourceGrouped="True"/>
 
-        <MenuFlyout x:Key="DialogMenuFlyout">
+        <MenuFlyout x:Key="DialogMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="DialogPin_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogPinCommand}" CommandParameter="{Binding}" Text="Pin to top"/>
             <MenuFlyoutItem Loaded="DialogClear_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogClearCommand}" CommandParameter="{Binding}" Text="Clear history"/>
             <MenuFlyoutItem Loaded="DialogDelete_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete conversation"/> <!-- Only shows with conversations to single people -->
@@ -147,15 +147,9 @@
                 </Pivot.LeftHeader>
                 <Pivot.RightHeader>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="{ThemeResource AppBarExpandButtonThemeWidthGridLength}"/>
-                            <ColumnDefinition Width="{ThemeResource AppBarExpandButtonThemeWidthGridLength}"/>
-                        </Grid.ColumnDefinitions>
-
                         <Button x:Name="btnOptions"
                                 Padding="16,23,16,0"
-                                Style="{StaticResource EllipsisButton}"
-                                Grid.Column="1">
+                                Style="{StaticResource EllipsisButton}">
                             <FontIcon x:Name="EllipsisIcon"
                                       VerticalAlignment="Center"
                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -187,7 +181,6 @@
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
-
                     </Grid>
                 </Pivot.RightHeader>
                 <PivotItem Header="Chats">
@@ -442,6 +435,7 @@
                     <ListView x:Name="UsersListView"
                               ItemsSource="{x:Bind ViewModel.Contacts.Items}"
                               Header="{x:Bind ViewModel.Contacts.Self, Mode=OneWay}"
+                              IsItemClickEnabled="True"
                               ItemClick="ListView_ItemClick"
                               SelectionChanged="ListView_SelectionChanged">
                         <ListView.HeaderTemplate>

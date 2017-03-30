@@ -12,6 +12,7 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit);
         Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync();
         Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null);
         Task<MTProtoResponse<TLMessagesRecentStickersBase>> GetRecentStickersAsync(bool attached, int hash);
@@ -100,7 +101,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLExportedChatInviteBase>> ExportChatInviteAsync(int chatId);
         Task<MTProtoResponse<bool>> ReportSpamAsync(TLInputPeerBase peer);
         Task<MTProtoResponse<TLUpdatesState>> GetStateAsync();
-        Task<MTProtoResponse<TLHelpAppChangelogBase>> GetAppChangelogAsync(string deviceModel, string systemVersion, string appVersion, string langCode);
+        Task<MTProtoResponse<TLUpdatesBase>> GetAppChangelogAsync(string prevAppVersion);
         Task<MTProtoResponse<TLAuthPasswordRecovery>> RequestPasswordRecoveryAsync();
         Task<MTProtoResponse<TLAccountPasswordBase>> GetPasswordAsync();
         Task<MTProtoResponse<TLUpdatesBase>> UpdatePinnedMessageAsync(bool silent, TLInputChannelBase channel, int id);
@@ -108,7 +109,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLUpdatesBase>> KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, bool kicked);
         Task<MTProtoResponse<TLMessage>> SendMessageAsync(TLMessage message, Action fastCallback);
         Task<MTProtoResponse<TLPong>> PingAsync(long pingId);
-        Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit);
+        Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit);
         Task<MTProtoResponse<bool>> ResetAuthorizationAsync(long hash);
         Task<MTProtoResponse<TLUpdatesBase>> MigrateChatAsync(int chatId);
         Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage);
