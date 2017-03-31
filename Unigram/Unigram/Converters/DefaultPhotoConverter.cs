@@ -11,7 +11,7 @@ using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Native;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -449,6 +449,18 @@ namespace Unigram.Converters
                         }
                     }
                 }
+            }
+
+            var invoiceMedia = value as TLMessageMediaInvoice;
+            if (invoiceMedia != null)
+            {
+                value = invoiceMedia.Photo;
+            }
+
+            var webDocument = value as TLWebDocument;
+            if (webDocument != null)
+            {
+                return webDocument.Url;
             }
 
             return null;

@@ -18,7 +18,7 @@ using Telegram.Api.Services.FileManager;
 using Telegram.Api;
 using System.IO;
 using Windows.Storage;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Login;
@@ -28,6 +28,7 @@ using Unigram.Services;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Users;
+using Unigram.ViewModels.Payments;
 
 namespace Unigram
 {
@@ -110,6 +111,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentReceiptViewModel>();
 
             container.Build();
 
@@ -179,7 +181,7 @@ namespace Unigram
                 Execute.BeginOnUIThread(() =>
                 {
                     var type = App.Current.NavigationService.CurrentPageType;
-                    if (type.Name.StartsWith("Login")) { }
+                    if (type.Name.StartsWith("SignIn") || type.Name.StartsWith("SignUp")) { }
                     else
                     {
                         App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));

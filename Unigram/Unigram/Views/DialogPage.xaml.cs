@@ -17,7 +17,7 @@ using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.Core.Dependency;
+using Unigram.Views;
 using Unigram.Core.Models;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
@@ -173,6 +173,8 @@ namespace Unigram.Views
         {
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+
+            DataContext = null;
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -180,7 +182,7 @@ namespace Unigram.Views
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
             StickersPanel.Height = args.OccludedRect.Height;
-            ReplyMarkupPanel.Height = args.OccludedRect.Height;
+            ReplyMarkupPanel.MaxHeight = args.OccludedRect.Height;
             //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
         }
 
@@ -528,7 +530,7 @@ namespace Unigram.Views
                 if (message != null)
                 {
                     var channel = ViewModel.With as TLChannel;
-                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                     {
                         var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                         var config = ViewModel.CacheService.GetConfig();
@@ -603,7 +605,7 @@ namespace Unigram.Views
                         return;
                     }
 
-                    var mediaCaption = message.Media as ITLMediaCaption;
+                    var mediaCaption = message.Media as ITLMessageMediaCaption;
                     if (mediaCaption != null && !string.IsNullOrEmpty(mediaCaption.Caption))
                     {
                         element.Visibility = Visibility.Visible;
@@ -731,8 +733,8 @@ namespace Unigram.Views
 
         private async void DatePickerFlyout_DatePicked(DatePickerFlyout sender, DatePickedEventArgs args)
         {
-            var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, args.NewDate.Date);
-            await ViewModel.LoadDateSliceAsync(offset);
+            //var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, args.NewDate.Date);
+            //await ViewModel.LoadDateSliceAsync(offset);
         }
     }
 
