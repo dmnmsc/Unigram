@@ -10,9 +10,9 @@
     d:DesignWidth="400"
     Background="Transparent"
     Foreground="{ThemeResource MessageSubtleLabelBrush}"
-    VerticalAlignment="Bottom"
+    VerticalAlignment="Center"
     HorizontalAlignment="Right"
-    Padding="0,-19,6,0">
+    Padding="0,-24,6,0">
 
     <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}">
         <ToolTipService.ToolTip>
