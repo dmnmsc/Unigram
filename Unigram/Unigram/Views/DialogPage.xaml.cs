@@ -173,8 +173,6 @@ namespace Unigram.Views
         {
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
-
-            DataContext = null;
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -203,7 +201,7 @@ namespace Unigram.Views
                 forwarding = container.FwdMessages != null && container.FwdMessages.Count > 0;
             }
 
-            if (txtMessage.IsEmpty && !forwarding)
+            if (ViewModel != null && txtMessage.IsEmpty && !forwarding)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Visible;

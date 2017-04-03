@@ -703,11 +703,30 @@ namespace Unigram.ViewModels
                     {
                         if (response.Result.Invoice.IsEmailRequested || response.Result.Invoice.IsNameRequested || response.Result.Invoice.IsPhoneRequested || response.Result.Invoice.IsShippingAddressRequested)
                         {
-                            NavigationService.Navigate(typeof(PaymentFormStep1Page), TLTuple.Create(message, response.Result));
+                            NavigationService.NavigateToPaymentFormStep1(message, response.Result);
+                        }
+                        else if (response.Result.HasSavedCredentials)
+                        {
+                            if (ApplicationSettings.Current.TmpPassword != null)
+                            {
+                                if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
+                                {
+                                    ApplicationSettings.Current.TmpPassword = null;
+                                }
+                            }
+
+                            if (ApplicationSettings.Current.TmpPassword != null)
+                            {
+                                NavigationService.NavigateToPaymentFormStep5(message, response.Result, null, null, null, null, null);
+                            }
+                            else
+                            {
+                                NavigationService.NavigateToPaymentFormStep4(message, response.Result, null, null, null);
+                            }
                         }
                         else
                         {
-                            // TODO: navigate to step 3 directly
+                            NavigationService.NavigateToPaymentFormStep3(message, response.Result, null, null, null);
                         }
                     }
                 }

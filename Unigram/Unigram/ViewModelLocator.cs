@@ -29,6 +29,7 @@ using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Users;
 using Unigram.ViewModels.Payments;
+using Windows.Foundation.Metadata;
 
 namespace Unigram
 {
@@ -75,6 +76,17 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
 
+            if (ApiInformation.IsTypePresent("Windows.Devices.Haptics.VibrationDevice") || ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
+            {
+                // Introduced in Creators Update
+                container.ContainerBuilder.RegisterType<VibrationService>().As<IVibrationService>().SingleInstance();
+            }
+            else if (ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
+            {
+                // To keep vibration compatibility with Anniversary Update
+                container.ContainerBuilder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
+            }
+
             // ViewModels
             container.ContainerBuilder.RegisterType<SignInWelcomeViewModel>();
             container.ContainerBuilder.RegisterType<SignInViewModel>();
@@ -113,6 +125,9 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep1ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep2ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep3ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep4ViewModel>();
+            container.ContainerBuilder.RegisterType<PaymentFormStep5ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentReceiptViewModel>();
 
             container.Build();
