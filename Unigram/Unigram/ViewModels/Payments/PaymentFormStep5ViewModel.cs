@@ -11,6 +11,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Windows.System;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
@@ -19,6 +20,7 @@ namespace Unigram.ViewModels.Payments
     {
         private TLPaymentsValidatedRequestedInfo _requestedInfo;
         private string _credentials;
+        private bool _save;
 
         public PaymentFormStep5ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
@@ -32,15 +34,20 @@ namespace Unigram.ViewModels.Payments
             {
                 using (var from = new TLBinaryReader(buffer))
                 {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string>(from);
+                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string, bool>(from);
 
                     Message = tuple.Item1;
                     Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
                     PaymentForm = tuple.Item2;
                     Info = tuple.Item3;
                     Shipping = tuple.Item5;
-                    CredentialsTitle = string.IsNullOrEmpty(tuple.Item7) ? _paymentForm.SavedCredentials.Title : tuple.Item6;
+                    CredentialsTitle = string.IsNullOrEmpty(tuple.Item7) ? null : tuple.Item7;
                     Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
+
+                    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
+                    {
+                        CredentialsTitle = savedCard.Title;
+                    }
 
                     var amount = 0L;
                     foreach (var price in _paymentForm.Invoice.Prices)
@@ -60,6 +67,7 @@ namespace Unigram.ViewModels.Payments
 
                     _requestedInfo = tuple.Item4;
                     _credentials = tuple.Item7;
+                    _save = tuple.Item8;
                 }
             }
 
@@ -144,22 +152,24 @@ namespace Unigram.ViewModels.Payments
             IsLoading = true;
 
             TLInputPaymentCredentialsBase credentials;
-            if (string.IsNullOrEmpty(_credentials))
+            if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
             {
-                credentials = new TLInputPaymentCredentialsSaved { Id = _paymentForm.SavedCredentials.Id, TmpPassword = ApplicationSettings.Current.TmpPassword.TmpPassword };
+                credentials = new TLInputPaymentCredentialsSaved { Id = savedCard.Id, TmpPassword = ApplicationSettings.Current.TmpPassword.TmpPassword };
             }
             else
             {
-                credentials = new TLInputPaymentCredentials { Data = new TLDataJSON { Data = _credentials } };
+                credentials = new TLInputPaymentCredentials { Data = new TLDataJSON { Data = _credentials }, IsSave = _save };
             }
 
             var response = await ProtoService.SendPaymentFormAsync(_message.Id, _requestedInfo?.Id, _shipping?.Id, credentials);
             if (response.IsSucceeded)
             {
-                var verificatioNeeded = response.Result as TLPaymentsPaymentVerficationNeeded;
-                if (verificatioNeeded != null)
+                if (response.Result is TLPaymentsPaymentVerficationNeeded verificationNeeded)
                 {
-                    
+                    if (Uri.TryCreate(verificationNeeded.Url, UriKind.Absolute, out Uri uri))
+                    {
+                        await Launcher.LaunchUriAsync(uri);
+                    }
                 }
 
                 NavigationService.GoBackAt(1);

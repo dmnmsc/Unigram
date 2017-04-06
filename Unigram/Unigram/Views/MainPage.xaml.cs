@@ -90,7 +90,7 @@ namespace Unigram.Views
 
             if (MasterDetail.NavigationService == null)
             {
-                MasterDetail.Initialize("Main");
+                MasterDetail.Initialize("Main", Frame);
                 MasterDetail.NavigationService.Frame.Navigated += OnNavigated;
             }
 
@@ -131,7 +131,7 @@ namespace Unigram.Views
                 }
             }
 
-            //var config = ViewModel.CacheService.GetConfig();
+            var config = ViewModel.CacheService.GetConfig();
             //if (config != null)
             //{
             //    if (config.IsPhoneCallsEnabled)

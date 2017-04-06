@@ -100,6 +100,10 @@
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
+    <Compile Include="Controls\GroupedGridView.cs" />
+    <Compile Include="Controls\GroupedListView.cs" />
+    <Compile Include="Controls\ImageCropper.cs" />
+    <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
@@ -116,7 +120,7 @@
     <Compile Include="Controls\Messages\InvoiceStatusControl.xaml.cs">
       <DependentUpon>InvoiceStatusControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\PhoneCallMessageBubble.cs" />
+    <Compile Include="Controls\Messages\PhoneCallMessageBubbleBase.cs" />
     <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
       <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
     </Compile>
@@ -126,10 +130,15 @@
     <Compile Include="Controls\Messages\PhoneCallMessageBubble.xaml.cs">
       <DependentUpon>PhoneCallMessageBubble.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Payments\CardTextBox.cs" />
+    <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\StickerView.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\TLListView.cs" />
+    <Compile Include="Controls\Views\EditYourPhotoView.xaml.cs">
+      <DependentUpon>EditYourPhotoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\JoinChatView.xaml.cs">
       <DependentUpon>JoinChatView.xaml</DependentUpon>
     </Compile>
@@ -674,6 +683,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\EditYourNameView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\EditYourPhotoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
