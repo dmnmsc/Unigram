@@ -262,7 +262,7 @@
                                              Click="ProfileBubble_Click"
                                              HorizontalAlignment="Left"
                                              VerticalAlignment="Bottom"
-                                             Margin="12,0,0,2"
+                                             Margin="12,16,0,2"
                                              Width="32"
                                              Height="32"/>
 
@@ -372,11 +372,11 @@
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="3"
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                             Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}" 
                                              Click="ProfileBubble_Click"
-                                             HorizontalAlignment="Left"
-                                             VerticalAlignment="Bottom"
-                                             Margin="12,0,0,2"
+                                             HorizontalAlignment="Left" 
+                                             VerticalAlignment="Top"
+                                             Margin="12,16,0,0"
                                              Width="32"
                                              Height="32"/>
                 <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
