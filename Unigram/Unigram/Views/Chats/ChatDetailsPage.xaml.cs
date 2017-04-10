@@ -26,21 +26,18 @@ namespace Unigram.Views.Chats
 
         public ChatDetailsPage()
         {
-            this.InitializeComponent();
-
+            InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<ChatDetailsViewModel>();
-
-            SizeChanged += OnSizeChanged;
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
         {
-            VisualStateManager.GoToState(this, e.NewSize.Width < 500 ? "NarrowState" : "FilledState", false);
+
         }
 
-        private void UsersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = ((TLUser)UsersListView.SelectedItem).Id });
+
         }
     }
 }

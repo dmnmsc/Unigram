@@ -52,7 +52,7 @@ namespace Unigram.ViewModels
             {
                 if (With is TLUser user)
                 {
-                    LastSeen = LastSeenHelper.GetLastSeenTime(user);
+                    LastSeen = LastSeenConverter.GetLabel(user, true);
                 }
                 else
                 {
@@ -70,7 +70,7 @@ namespace Unigram.ViewModels
         {
             if (With is TLUser user)
             {
-                return LastSeenHelper.GetLastSeenTime(user);
+                return LastSeenConverter.GetLabel(user, true);
             }
 
             if (With is TLChannel channel && channel.HasAccessHash && channel.AccessHash.HasValue)
