@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Unigram.Controls.Views;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Foundation.Collections;
@@ -30,6 +31,8 @@ namespace Unigram.Controls
 
         private ManualResetEvent _startReset = new ManualResetEvent(true);
         private ManualResetEvent _stopReset = new ManualResetEvent(false);
+
+        private RoundVideoView _roundView = new RoundVideoView();
 
         public TimeSpan Elapsed
         {
@@ -94,6 +97,7 @@ namespace Unigram.Controls
 
                 Execute.BeginOnUIThread(() =>
                 {
+                    //_roundView.IsOpen = true;
                     RecordingStarted?.Invoke(this, EventArgs.Empty);
                 });
 
@@ -144,6 +148,7 @@ namespace Unigram.Controls
 
                 Execute.BeginOnUIThread(() =>
                 {
+                    //_roundView.IsOpen = false;
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
                 });
 
@@ -214,6 +219,7 @@ namespace Unigram.Controls
             public OpusRecorder(StorageFile file)
             {
                 m_file = file;
+
                 InitializeSettings();
             }
 
@@ -240,6 +246,7 @@ namespace Unigram.Controls
                 wavEncodingProfile.Audio.BitsPerSample = 16;
                 wavEncodingProfile.Audio.SampleRate = 48000;
                 wavEncodingProfile.Audio.ChannelCount = 1;
+
                 await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
             }
 
