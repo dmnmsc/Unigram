@@ -33,24 +33,21 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
-
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+using Windows.UI.Xaml.Media.Animation;
+using Unigram.Controls.Views;
 
 namespace Unigram.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class ArticlePage : Page
+    public sealed partial class InstantPage : Page
     {
-        public ArticleViewModel ViewModel => DataContext as ArticleViewModel;
+        public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
         private readonly string _injectedJs;
 
-        public ArticlePage()
+        public InstantPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ArticleViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<InstantViewModel>();
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = File.ReadAllText(jsPath);
@@ -76,31 +73,41 @@ namespace Unigram.Views
             {
                 _webpageId = webpage.Id;
 
-                if (webpage.HasPhoto && !webpage.CachedPage.Photos.Any(x => x.Id == webpage.Photo.Id))
+                var photos = new List<TLPhotoBase>(webpage.CachedPage.Photos);
+                var videos = new List<TLDocumentBase>(webpage.CachedPage.Videos);
+
+                if (webpage.HasPhoto)
                 {
-                    webpage.CachedPage.Photos.Insert(0, webpage.Photo);
+                    photos.Insert(0, webpage.Photo);
                 }
 
                 var processed = 0;
                 foreach (var block in webpage.CachedPage.Blocks)
                 {
-                    ProcessBlock(webpage.CachedPage, block);
+                    ProcessBlock(webpage.CachedPage, block, photos, videos);
                     processed++;
                 }
 
                 var part = webpage.CachedPage as TLPagePart;
                 if (part != null)
                 {
-                    var protoService = (MTProtoService)MTProtoService.Current;
-                    var response = await protoService.GetWebPageAsync(webpage.Url, webpage.Hash);
+                    var response = await MTProtoService.Current.GetWebPageAsync(webpage.Url, webpage.Hash);
                     if (response.IsSucceeded)
                     {
                         var newpage = response.Result as TLWebPage;
                         if (newpage != null && newpage.HasCachedPage)
                         {
+                            photos = new List<TLPhotoBase>(newpage.CachedPage.Photos);
+                            videos = new List<TLDocumentBase>(newpage.CachedPage.Videos);
+
+                            if (webpage.HasPhoto)
+                            {
+                                photos.Insert(0, webpage.Photo);
+                            }
+
                             for (int i = processed; i < newpage.CachedPage.Blocks.Count; i++)
                             {
-                                ProcessBlock(newpage.CachedPage, newpage.CachedPage.Blocks[i]);
+                                ProcessBlock(newpage.CachedPage, newpage.CachedPage.Blocks[i], photos, videos);
                             }
                         }
                     }
@@ -117,72 +124,89 @@ namespace Unigram.Views
 
         private Dictionary<string, Border> _anchors = new Dictionary<string, Border>();
 
-        private void ProcessBlock(TLPageBase page, TLPageBlockBase block)
+        private void ProcessBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
-            switch (block.TypeId)
+            switch (block)
             {
-                case TLType.PageBlockCover:
-                    ProcessCover(page, (TLPageBlockCover)block);
+                case TLPageBlockCover cover:
+                    ProcessCover(page, cover, photos, videos);
                     break;
-                case TLType.PageBlockAuthorDate:
-                    ProcessAuthorDate(page, (TLPageBlockAuthorDate)block);
+                case TLPageBlockAuthorDate authorDate:
+                    ProcessAuthorDate(page, authorDate, photos, videos);
                     break;
-                case TLType.PageBlockHeader:
-                case TLType.PageBlockSubheader:
-                case TLType.PageBlockTitle:
-                case TLType.PageBlockSubtitle:
-                case TLType.PageBlockFooter:
-                case TLType.PageBlockParagraph:
-                    ProcessTextBlock(page, block, false);
+                case TLPageBlockHeader header:
+                case TLPageBlockSubheader subheader:
+                case TLPageBlockTitle title:
+                case TLPageBlockSubtitle subtitle:
+                case TLPageBlockFooter footer:
+                case TLPageBlockParagraph paragraph:
+                    ProcessTextBlock(page, block, photos, videos, false);
                     break;
-                case TLType.PageBlockBlockquote:
-                    ProcessBlockquote(page, (TLPageBlockBlockquote)block);
+                case TLPageBlockBlockquote blockquote:
+                    ProcessBlockquote(page, blockquote, photos, videos);
                     break;
-                case TLType.PageBlockDivider:
-                    ProcessDivider(page, (TLPageBlockDivider)block);
+                case TLPageBlockDivider divider:
+                    ProcessDivider(page, divider, photos, videos);
                     break;
-                case TLType.PageBlockPhoto:
-                    ProcessPhoto(page, (TLPageBlockPhoto)block);
+                case TLPageBlockPhoto photo:
+                    ProcessPhoto(page, photo, photos, videos);
                     break;
-                case TLType.PageBlockList:
-                    ProcessList(page, (TLPageBlockList)block);
+                case TLPageBlockList list:
+                    ProcessList(page, list, photos, videos);
                     break;
-                case TLType.PageBlockVideo:
-                    ProcessVideo(page, (TLPageBlockVideo)block);
+                case TLPageBlockVideo video:
+                    ProcessVideo(page, video, photos, videos);
                     break;
-                case TLType.PageBlockEmbedPost:
-                    ProcessEmbedPost(page, (TLPageBlockEmbedPost)block);
+                case TLPageBlockEmbedPost embedPost:
+                    ProcessEmbedPost(page, embedPost, photos, videos);
                     break;
-                case TLType.PageBlockSlideshow:
-                    ProcessSlideshow(page, (TLPageBlockSlideshow)block);
+                case TLPageBlockSlideshow slideshow:
+                    ProcessSlideshow(page, slideshow, photos, videos);
                     break;
-                case TLType.PageBlockCollage:
-                    ProcessCollage(page, (TLPageBlockCollage)block);
+                case TLPageBlockCollage collage:
+                    ProcessCollage(page, collage, photos, videos);
                     break;
-                case TLType.PageBlockEmbed:
-                    ProcessEmbed(page, (TLPageBlockEmbed)block);
+                case TLPageBlockEmbed embed:
+                    ProcessEmbed(page, embed, photos, videos);
                     break;
-                case TLType.PageBlockPullquote:
-                    ProcessPullquote(page, (TLPageBlockPullquote)block);
+                case TLPageBlockPullquote pullquote:
+                    ProcessPullquote(page, pullquote, photos, videos);
                     break;
-                case TLType.PageBlockAnchor:
-                    ProcessAnchor(page, (TLPageBlockAnchor)block);
+                case TLPageBlockAnchor anchor:
+                    ProcessAnchor(page, anchor, photos, videos);
                     break;
-                case TLType.PageBlockPreformatted:
-                case TLType.PageBlockUnsupported:
+                case TLPageBlockPreformatted preformatted:
+                    ProcessPreformatted(page, preformatted, photos, videos);
+                    break;
+                case TLPageBlockUnsupported unsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
             }
         }
 
-        private void ProcessAnchor(TLPageBase page, TLPageBlockAnchor block)
+        private void ProcessPreformatted(TLPageBase page, TLPageBlockPreformatted block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            _containers.Push(new StackPanel
+            {
+                Style = Resources["BlockPreformattedStyle"] as Style,
+                Margin = new Thickness(0, 0, 0, 12),
+                Padding = new Thickness(0, 8, 0, 0)
+            });
+
+            ProcessTextBlock(page, block, photos, videos, false);
+
+            var panel = _containers.Pop();
+            _containers.Peek().Children.Add(panel);
+        }
+
+        private void ProcessAnchor(TLPageBase page, TLPageBlockAnchor block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             var child = new Border();
             _containers.Peek().Children.Add(child);
             _anchors[block.Name] = child;
         }
 
-        private void ProcessEmbed(TLPageBase page, TLPageBlockEmbed block)
+        private void ProcessEmbed(TLPageBase page, TLPageBlockEmbed block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
@@ -232,7 +256,7 @@ namespace Unigram.Views
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -254,7 +278,7 @@ namespace Unigram.Views
             await sender.InvokeScriptAsync("eval", new[] { jss });
         }
 
-        private void ProcessCollage(TLPageBase page, TLPageBlockCollage block)
+        private void ProcessCollage(TLPageBase page, TLPageBlockCollage block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
@@ -267,7 +291,7 @@ namespace Unigram.Views
                 var photoBlock = item as TLPageBlockPhoto;
                 if (photoBlock != null)
                 {
-                    var photo = page.Photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
+                    var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
                     var image = new Image();
                     image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
                     image.Width = 72;
@@ -281,7 +305,7 @@ namespace Unigram.Views
                 var videoBlock = item as TLPageBlockVideo;
                 if (videoBlock != null)
                 {
-                    var video = page.Videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
+                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     var image = new Image();
                     image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
                     image.Width = 72;
@@ -318,7 +342,7 @@ namespace Unigram.Views
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -329,7 +353,7 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessSlideshow(TLPageBase page, TLPageBlockSlideshow block)
+        private void ProcessSlideshow(TLPageBase page, TLPageBlockSlideshow block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
@@ -342,7 +366,7 @@ namespace Unigram.Views
                 var photoBlock = item as TLPageBlockPhoto;
                 if (photoBlock != null)
                 {
-                    var photo = page.Photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
+                    var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
                     var image = new ImageView();
                     image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
                     image.Constraint = photo;
@@ -353,7 +377,7 @@ namespace Unigram.Views
                 var videoBlock = item as TLPageBlockVideo;
                 if (videoBlock != null)
                 {
-                    var video = page.Videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
+                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     var image = new ImageView();
                     image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
                     image.Constraint = video;
@@ -369,7 +393,7 @@ namespace Unigram.Views
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -380,7 +404,7 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessEmbedPost(TLPageBase page, TLPageBlockEmbedPost block)
+        private void ProcessEmbedPost(TLPageBase page, TLPageBlockEmbedPost block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _containers.Push(new StackPanel
             {
@@ -396,7 +420,7 @@ namespace Unigram.Views
             header.ColumnDefinitions.Add(new ColumnDefinition());
             header.Margin = new Thickness(12, 0, 0, 12);
 
-            var photo = page.Photos.FirstOrDefault(x => x.Id == block.AuthorPhotoId);
+            var photo = photos.FirstOrDefault(x => x.Id == block.AuthorPhotoId);
 
             var ellipse = new Ellipse();
             ellipse.Width = 36;
@@ -427,30 +451,36 @@ namespace Unigram.Views
 
             foreach (var sub in block.Blocks)
             {
-                ProcessBlock(page, sub);
+                ProcessBlock(page, sub, photos, videos);
             }
 
             var panel = _containers.Pop();
             _containers.Peek().Children.Add(panel);
         }
 
-        private void ProcessVideo(TLPageBase page, TLPageBlockVideo block)
+        private void ProcessVideo(TLPageBase page, TLPageBlockVideo block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
                 _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
             }
 
-            var video = page.Videos.FirstOrDefault(x => x.Id == block.VideoId);
+            var video = videos.FirstOrDefault(x => x.Id == block.VideoId);
+            var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
             var image = new ImageView();
             image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
             image.Constraint = video;
+            image.DataContext = galleryItem;
+            image.Click += Image_Click;
+            image.HorizontalAlignment = HorizontalAlignment.Center;
+
+            ViewModel.Gallery.Items.Add(galleryItem);
 
             _containers.Peek().Children.Add(image);
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -461,7 +491,7 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessList(TLPageBase page, TLPageBlockList block)
+        private void ProcessList(TLPageBase page, TLPageBlockList block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             var textBlock = new RichTextBlock();
             textBlock.TextWrapping = TextWrapping.Wrap;
@@ -485,7 +515,7 @@ namespace Unigram.Views
             _containers.Peek().Children.Add(textBlock);
         }
 
-        private void ProcessDivider(TLPageBase page, TLPageBlockDivider block)
+        private void ProcessDivider(TLPageBase page, TLPageBlockDivider block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _containers.Peek().Children.Add(new Rectangle
             {
@@ -495,7 +525,7 @@ namespace Unigram.Views
             });
         }
 
-        private void ProcessBlockquote(TLPageBase page, TLPageBlockBlockquote block)
+        private void ProcessBlockquote(TLPageBase page, TLPageBlockBlockquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _containers.Push(new StackPanel
             {
@@ -504,14 +534,14 @@ namespace Unigram.Views
                 Margin = new Thickness(12, 0, 0, 12)
             });
 
-            ProcessTextBlock(page, block, false);
-            ProcessTextBlock(page, block, true);
+            ProcessTextBlock(page, block, photos, videos, false);
+            ProcessTextBlock(page, block, photos, videos, true);
 
             var panel = _containers.Pop();
             _containers.Peek().Children.Add(panel);
         }
 
-        private void ProcessPullquote(TLPageBase page, TLPageBlockPullquote block)
+        private void ProcessPullquote(TLPageBase page, TLPageBlockPullquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _containers.Push(new StackPanel
             {
@@ -520,56 +550,59 @@ namespace Unigram.Views
                 Margin = new Thickness(0, 0, 0, 12)
             });
 
-            ProcessTextBlock(page, block, false);
-            ProcessTextBlock(page, block, true);
+            ProcessTextBlock(page, block, photos, videos, false);
+            ProcessTextBlock(page, block, photos, videos, true);
 
             var panel = _containers.Pop();
             _containers.Peek().Children.Add(panel);
         }
 
-        private void ProcessTextBlock(TLPageBase page, TLPageBlockBase block, bool caption)
+        private void ProcessTextBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos, bool caption)
         {
             TLRichTextBase text = null;
-            switch (block.TypeId)
+            switch (block)
             {
-                case TLType.PageBlockTitle:
-                    text = ((TLPageBlockTitle)block).Text;
+                case TLPageBlockTitle title:
+                    text = title.Text;
                     break;
-                case TLType.PageBlockSubtitle:
-                    text = ((TLPageBlockSubtitle)block).Text;
+                case TLPageBlockSubtitle subtitle:
+                    text = subtitle.Text;
                     break;
-                case TLType.PageBlockHeader:
-                    text = ((TLPageBlockHeader)block).Text;
+                case TLPageBlockHeader header:
+                    text = header.Text;
                     break;
-                case TLType.PageBlockSubheader:
-                    text = ((TLPageBlockSubheader)block).Text;
+                case TLPageBlockSubheader subheader:
+                    text = subheader.Text;
                     break;
-                case TLType.PageBlockFooter:
-                    text = ((TLPageBlockFooter)block).Text;
+                case TLPageBlockFooter footer:
+                    text = footer.Text;
                     break;
-                case TLType.PageBlockParagraph:
-                    text = ((TLPageBlockParagraph)block).Text;
+                case TLPageBlockParagraph paragraph:
+                    text = paragraph.Text;
                     break;
-                case TLType.PageBlockPhoto:
-                    text = ((TLPageBlockPhoto)block).Caption;
+                case TLPageBlockPreformatted preformatted:
+                    text = preformatted.Text;
                     break;
-                case TLType.PageBlockVideo:
-                    text = ((TLPageBlockVideo)block).Caption;
+                case TLPageBlockPhoto photo:
+                    text = photo.Caption;
                     break;
-                case TLType.PageBlockSlideshow:
-                    text = ((TLPageBlockSlideshow)block).Caption;
+                case TLPageBlockVideo video:
+                    text = video.Caption;
                     break;
-                case TLType.PageBlockEmbed:
-                    text = ((TLPageBlockEmbed)block).Caption;
+                case TLPageBlockSlideshow slideshow:
+                    text = slideshow.Caption;
                     break;
-                case TLType.PageBlockEmbedPost:
-                    text = ((TLPageBlockEmbedPost)block).Caption;
+                case TLPageBlockEmbed embed:
+                    text = embed.Caption;
                     break;
-                case TLType.PageBlockBlockquote:
-                    text = caption ? ((TLPageBlockBlockquote)block).Caption : ((TLPageBlockBlockquote)block).Text;
+                case TLPageBlockEmbedPost embedPost:
+                    text = embedPost.Caption;
                     break;
-                case TLType.PageBlockPullquote:
-                    text = caption ? ((TLPageBlockPullquote)block).Caption : ((TLPageBlockPullquote)block).Text;
+                case TLPageBlockBlockquote blockquote:
+                    text = caption ? blockquote.Caption : blockquote.Text;
+                    break;
+                case TLPageBlockPullquote pullquote:
+                    text = caption ? pullquote.Caption : pullquote.Text;
                     break;
             }
 
@@ -640,30 +673,36 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessCover(TLPageBase page, TLPageBlockCover block)
+        private void ProcessCover(TLPageBase page, TLPageBlockCover block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             _parents.Push(block);
-            ProcessBlock(page, block.Cover);
+            ProcessBlock(page, block.Cover, photos, videos);
             _parents.Pop();
         }
 
-        private void ProcessPhoto(TLPageBase page, TLPageBlockPhoto block)
+        private void ProcessPhoto(TLPageBase page, TLPageBlockPhoto block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
                 _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
             }
 
-            var photo = page.Photos.FirstOrDefault(x => x.Id == block.PhotoId);
+            var photo = photos.FirstOrDefault(x => x.Id == block.PhotoId);
+            var galleryItem = new GalleryPhotoItem(photo as TLPhoto, block.Caption?.ToString());
             var image = new ImageView();
             image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
             image.Constraint = photo;
+            image.DataContext = galleryItem;
+            image.Click += Image_Click;
+            image.HorizontalAlignment = HorizontalAlignment.Center;
+
+            ViewModel.Gallery.Items.Add(galleryItem);
 
             _containers.Peek().Children.Add(image);
 
             if (block.Caption.TypeId != TLType.TextEmpty)
             {
-                ProcessTextBlock(page, block, true);
+                ProcessTextBlock(page, block, photos, videos, true);
 
                 var panel = _containers.Pop();
                 _containers.Peek().Children.Add(panel);
@@ -679,19 +718,41 @@ namespace Unigram.Views
             }
         }
 
-        private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block)
+        private async void Image_Click(object sender, RoutedEventArgs e)
         {
-            var textBlock = new TextBlock();
-            var span = new Span();
-            textBlock.FontSize = 14;
-            textBlock.Inlines.Add(new Run { Text = "By " });
-            textBlock.Inlines.Add(span);
-            textBlock.TextWrapping = TextWrapping.Wrap;
-            textBlock.Margin = new Thickness(12, 0, 12, 12);
-            textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-            ProcessText(block.Author, span);
+            var image = sender as ImageView;
+            var item = image.DataContext as GalleryItem;
+            if (item != null)
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
-            textBlock.Inlines.Add(new Run { Text = " — " });
+                ViewModel.Gallery.SelectedItem = item;
+
+                await GalleryView.Current.ShowAsync(ViewModel.Gallery, (s, args) =>
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
+                    {
+                        animation.TryStart(image);
+                    }
+                });
+            }
+        }
+
+        private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var textBlock = new TextBlock { Style = Resources["AuthorDateTextBlockStyle"] as Style };
+
+            if (block.Author.TypeId != TLType.TextEmpty)
+            {
+                var span = new Span();
+                textBlock.Inlines.Add(new Run { Text = "By " });
+                textBlock.Inlines.Add(span);
+                ProcessText(block.Author, span);
+
+                textBlock.Inlines.Add(new Run { Text = " — " });
+            }
+
             //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
             textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DateTime(block.PublishedDate).ToString("dd MMMM yyyy") });
 
@@ -700,12 +761,9 @@ namespace Unigram.Views
 
         private void ProcessText(TLRichTextBase text, Span span)
         {
-            switch (text.TypeId)
+            switch (text)
             {
-                case TLType.TextPlain:
-                    var plainText = (TLTextPlain)text;
-
-                    // Strikethrough fallback
+                case TLTextPlain plainText:
                     if (GetIsStrikethrough(span))
                     {
                         span.Inlines.Add(new Run { Text = StrikethroughFallback(plainText.Text) });
@@ -715,8 +773,7 @@ namespace Unigram.Views
                         span.Inlines.Add(new Run { Text = plainText.Text });
                     }
                     break;
-                case TLType.TextConcat:
-                    var concatText = (TLTextConcat)text;
+                case TLTextConcat concatText:
                     foreach (var concat in concatText.Texts)
                     {
                         var concatRun = new Span();
@@ -724,50 +781,38 @@ namespace Unigram.Views
                         ProcessText(concat, concatRun);
                     }
                     break;
-                case TLType.TextBold:
-                    var boldText = (TLTextBold)text;
+                case TLTextBold boldText:
                     span.FontWeight = FontWeights.SemiBold;
                     ProcessText(boldText.Text, span);
                     break;
-                case TLType.TextEmail:
-                    var emailText = (TLTextEmail)text;
+                case TLTextEmail emailText:
                     ProcessText(emailText.Text, span);
                     break;
-                case TLType.TextFixed:
-                    var fixedText = (TLTextFixed)text;
+                case TLTextFixed fixedText:
                     span.FontFamily = new FontFamily("Consolas");
                     ProcessText(fixedText.Text, span);
                     break;
-                case TLType.TextItalic:
-                    var italicText = (TLTextItalic)text;
-                    span.FontStyle = FontStyle.Italic;
+                case TLTextItalic italicText:
+                    span.FontStyle |= FontStyle.Italic;
                     ProcessText(italicText.Text, span);
                     break;
-                case TLType.TextStrike:
-                    var strikeText = (TLTextStrike)text;
-                    // 10.0.15021 or higher
+                case TLTextStrike strikeText:
                     if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
                     {
-                        // TODO: uncomment when RTM SDK will be publicly available
-                        //span.TextDecorations = Windows.UI.Text.TextDecorations.Strikethrough;
-                        //ProcessText(underlineText.Text, collection, span);
+                        span.TextDecorations |= TextDecorations.Strikethrough;
+                        ProcessText(strikeText.Text, span);
                     }
                     else
                     {
-                        // TODO: not supported in xaml
                         SetIsStrikethrough(span, true);
                         ProcessText(strikeText.Text, span);
                     }
                     break;
-                case TLType.TextUnderline:
-                    var underlineText = (TLTextUnderline)text;
-
-                    // 10.0.15021 or higher
+                case TLTextUnderline underlineText:
                     if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
                     {
-                        // TODO: uncomment when RTM SDK will be publicly available
-                        //span.TextDecorations = Windows.UI.Text.TextDecorations.Underline;
-                        //ProcessText(underlineText.Text, collection, span);
+                        span.TextDecorations |= TextDecorations.Underline;
+                        ProcessText(underlineText.Text, span);
                     }
                     else
                     {
@@ -776,15 +821,13 @@ namespace Unigram.Views
                         ProcessText(underlineText.Text, underline);
                     }
                     break;
-                case TLType.TextUrl:
-                    var urlText = (TLTextUrl)text;
+                case TLTextUrl urlText:
                     var hyperlink = new Hyperlink();
                     span.Inlines.Add(hyperlink);
                     hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
                     ProcessText(urlText.Text, hyperlink);
                     break;
-                case TLType.TextEmpty:
-                    var emptyText = (TLTextEmpty)text;
+                case TLTextEmpty emptyText:
                     break;
             }
         }
@@ -802,7 +845,7 @@ namespace Unigram.Views
                         var transform = anchor.TransformToVisual(LayoutRoot);
                         var position = transform.TransformPoint(new Point());
 
-                        ScrollingHost.ChangeView(null, Math.Max(0, position.Y - 12), null);
+                        ScrollingHost.ChangeView(null, Math.Max(0, position.Y - 8), null, false);
                     }
                 }
             }
@@ -814,7 +857,7 @@ namespace Unigram.Views
                     {
                         Execute.BeginOnUIThread(() =>
                         {
-                            ViewModel.NavigationService.Navigate(typeof(ArticlePage), result);
+                            ViewModel.NavigationService.Navigate(typeof(InstantPage), result);
                         });
                     },
                     fault =>
@@ -869,7 +912,7 @@ namespace Unigram.Views
         }
 
         public static readonly DependencyProperty IsStrikethroughProperty =
-            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(ArticlePage), new PropertyMetadata(false));
+            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(InstantPage), new PropertyMetadata(false));
 
         #endregion
     }

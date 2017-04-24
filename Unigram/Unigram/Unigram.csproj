@@ -178,6 +178,9 @@
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\TLListView.cs" />
+    <Compile Include="Controls\Views\AttachedStickersView.xaml.cs">
+      <DependentUpon>AttachedStickersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\EditYourPhotoView.xaml.cs">
       <DependentUpon>EditYourPhotoView.xaml</DependentUpon>
     </Compile>
@@ -201,9 +204,11 @@
     </Compile>
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
+    <Compile Include="Selectors\GalleryTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
+    <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelDetailsViewModel.cs" />
@@ -216,6 +221,7 @@
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
+    <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep3ViewModel.cs" />
@@ -234,6 +240,7 @@
     <Compile Include="ViewModels\Settings\SettingsStickersArchivedViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModelBase.cs" />
+    <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
@@ -327,7 +334,7 @@
     </Compile>
     <Compile Include="Converters\LastSeenConverter.cs" />
     <Compile Include="Converters\PhoneNumberFormatConverter.cs" />
-    <Compile Include="ViewModels\ArticleViewModel.cs" />
+    <Compile Include="ViewModels\InstantViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Typing.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -416,8 +423,8 @@
     </Compile>
     <Compile Include="Controls\MasterDetailView.cs" />
     <Compile Include="Controls\Messages\MessageBubbleBase.cs" />
-    <Compile Include="Controls\Views\PhotosView.xaml.cs">
-      <DependentUpon>PhotosView.xaml</DependentUpon>
+    <Compile Include="Controls\Views\GalleryView.xaml.cs">
+      <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PivotRadioButton.cs" />
     <Compile Include="Controls\Messages\MessageReference.xaml.cs">
@@ -476,7 +483,7 @@
     <Compile Include="ViewModels\SignIn\SignInViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInWelcomeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\PhotosViewModelBase.cs" />
+    <Compile Include="ViewModels\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsEditNameViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersFeaturedViewModel.cs" />
@@ -489,8 +496,8 @@
     <Compile Include="Views\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ArticlePage.xaml.cs">
-      <DependentUpon>ArticlePage.xaml</DependentUpon>
+    <Compile Include="Views\InstantPage.xaml.cs">
+      <DependentUpon>InstantPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
@@ -503,9 +510,6 @@
     </Compile>
     <Compile Include="Views\Chats\CreateChatStep1Page.xaml.cs">
       <DependentUpon>CreateChatStep1Page.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DialogInfoAdminsPage.xaml.cs">
-      <DependentUpon>DialogInfoAdminsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DialogPage.Bubbles.xaml.cs">
       <DependentUpon>DialogPage.xaml</DependentUpon>
@@ -764,6 +768,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\AttachedStickersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\DeleteChannelMessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -780,7 +788,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\PhotosView.xaml">
+    <Page Include="Controls\Views\GalleryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -852,7 +860,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ArticlePage.xaml">
+    <Page Include="Views\InstantPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -897,10 +905,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\CreateChatStep2Page.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DialogInfoAdminsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

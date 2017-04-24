@@ -21,8 +21,8 @@ using Windows.Storage;
 using Unigram.Views;
 using Unigram.Core.Services;
 using Unigram.ViewModels;
-using Unigram.ViewModels.Login;
-using Unigram.Views.Login;
+using Unigram.ViewModels.SignIn;
+using Unigram.Views.SignIn;
 using Unigram.ViewModels.Settings;
 using Unigram.Services;
 using Unigram.ViewModels.Channels;
@@ -118,7 +118,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<CreateChannelStep2ViewModel>(); //.SingleInstance();
             container.ContainerBuilder.RegisterType<CreateChatStep1ViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<CreateChatStep2ViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<ArticleViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<InstantViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<FeaturedStickersViewModel>().SingleInstance();
@@ -134,6 +134,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsStickersArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsMasksViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<AttachedStickersViewModel>();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep1ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep2ViewModel>();
