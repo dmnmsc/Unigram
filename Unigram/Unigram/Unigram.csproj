@@ -205,6 +205,7 @@
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
+    <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
@@ -229,6 +230,7 @@
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
@@ -282,6 +284,9 @@
     </Compile>
     <Compile Include="Views\Payments\PaymentReceiptPage.xaml.cs">
       <DependentUpon>PaymentReceiptPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
+      <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
@@ -688,9 +693,7 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Assets\Noise.jpg" />
-    <Content Include="Assets\Webviews\injected.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Assets\Webviews\injected.js" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
@@ -948,6 +951,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsStatsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SignIn\SignInPasswordPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1073,7 +1080,7 @@
       <Version>4.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.3.2</Version>
+      <Version>5.3.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.0</Version>
@@ -1115,10 +1122,6 @@
     <ProjectReference Include="..\Unigram.WebView\Unigram.Webview.csproj">
       <Project>{ac06b3e5-5174-4381-a167-8f912d61f3de}</Project>
       <Name>Unigram.Webview</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UnigramHost\UnigramHost.vcxproj">
-      <Project>{0dbcf059-2952-4809-9003-193ca0c6d499}</Project>
-      <Name>UnigramHost</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

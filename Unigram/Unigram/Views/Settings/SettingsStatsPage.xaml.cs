@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -15,21 +16,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsDataPage : Page
+    public sealed partial class SettingsStatsPage : Page
     {
-        public SettingsDataPage()
-        {
-            this.InitializeComponent();
-        }
+        public SettingsStatsViewModel ViewModel => DataContext as SettingsStatsViewModel;
 
-        private void Storage_Click(object sender, RoutedEventArgs e)
+        public SettingsStatsPage()
         {
-            Frame.Navigate(typeof(SettingsStoragePage));
-        }
-
-        private void Stats_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsStatsPage));
+            InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsStatsViewModel>();
         }
     }
 }

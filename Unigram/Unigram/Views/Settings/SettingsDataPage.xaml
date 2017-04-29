@@ -19,6 +19,7 @@
 
         <StackPanel Grid.Row="1">
             <Button Content="Storage usage" Click="Storage_Click"/>
+            <Button Content="Data usage" Click="Stats_Click"/>
         </StackPanel>
     </Grid>
 </Page>
