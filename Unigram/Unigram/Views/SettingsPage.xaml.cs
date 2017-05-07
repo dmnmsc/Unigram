@@ -28,10 +28,10 @@ namespace Unigram.Views
         public SettingsPage()
         {
             InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel>();
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel>();
 
             Loaded += OnLoaded;
 
@@ -40,7 +40,7 @@ namespace Unigram.Views
             if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
             {
                 var optionDelete = new HyperButton();
-                optionDelete.Style = Resources["HyperButtonStyle"] as Style;
+                optionDelete.Style = App.Current.Resources["HyperButtonStyle"] as Style;
                 optionDelete.Command = ViewModel.DeleteAccountCommand;
                 optionDelete.Content = "!!! DELETE ACCOUNT !!!";
 
@@ -49,7 +49,7 @@ namespace Unigram.Views
             }
 
             var optionAccounts = new HyperButton();
-            optionAccounts.Style = Resources["HyperButtonStyle"] as Style;
+            optionAccounts.Style = App.Current.Resources["HyperButtonStyle"] as Style;
             optionAccounts.Click += Accounts_Click;
             optionAccounts.Content = "Accounts management";
 
@@ -76,11 +76,6 @@ namespace Unigram.Views
             }
         }
 
-        RelayCommand NotifcationPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage)));
-        RelayCommand PrivacyPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage)));
-        RelayCommand StickersPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage)));
-        RelayCommand WallpaperPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsWallpaperPage)));
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             //if (Frame.CanGoBack)
@@ -100,6 +95,11 @@ namespace Unigram.Views
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
+        }
+
+        private void Generic_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsGenericPage));
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
@@ -173,6 +173,11 @@ namespace Unigram.Views
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
             }
+        }
+
+        private async void Questions_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
         }
     }
 

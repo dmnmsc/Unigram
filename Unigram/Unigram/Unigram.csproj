@@ -210,8 +210,12 @@
     <Compile Include="Controls\ZoomableGridViewPopup.xaml.cs">
       <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanNegationConverter.cs" />
+    <Compile Include="Converters\BooleanToIndexConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
+    <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
+    <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
@@ -221,12 +225,16 @@
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelDetailsViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelEditTypeViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelEditViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelParticipantsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelParticipantsViewModelBase.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelKickedViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
@@ -238,6 +246,7 @@
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsGenericViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
@@ -261,6 +270,12 @@
     <Compile Include="Views\Channels\ChannelDetailsPage.xaml.cs">
       <DependentUpon>ChannelDetailsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Channels\ChannelEditPage.xaml.cs">
+      <DependentUpon>ChannelEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Channels\ChannelEditTypePage.xaml.cs">
+      <DependentUpon>ChannelEditTypePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Channels\ChannelKickedPage.xaml.cs">
       <DependentUpon>ChannelKickedPage.xaml</DependentUpon>
     </Compile>
@@ -272,6 +287,12 @@
     </Compile>
     <Compile Include="Views\Channels\CreateChannelStep3Page.xaml.cs">
       <DependentUpon>CreateChannelStep3Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
+      <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatInvitePage.xaml.cs">
+      <DependentUpon>ChatInvitePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
@@ -299,6 +320,9 @@
     </Compile>
     <Compile Include="Views\PlaygroundPage2.xaml.cs">
       <DependentUpon>PlaygroundPage2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsGenericPage.xaml.cs">
+      <DependentUpon>SettingsGenericPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
@@ -1219,6 +1243,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Channels\ChannelEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\ChannelEditTypePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatInviteLinkPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatInvitePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\InstantPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1312,6 +1352,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaygroundPage2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsGenericPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1510,6 +1554,10 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!--<PropertyGroup>
     <PreBuildEvent>xcopy /y /s "$(SolutionDir)Unigram.DesktopService\bin\$(ConfigurationName)\Unigram.DesktopService.exe" "$(SolutionDir)\Unigram\bin\x64\$(ConfigurationName)\AppX\"
