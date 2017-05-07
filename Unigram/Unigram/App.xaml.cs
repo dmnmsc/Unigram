@@ -98,7 +98,7 @@ namespace Unigram
                 catch { }
             };
 
-#if !DEBUG
+//#if !DEBUG
 
             HockeyClient.Current.Configure("7d36a4260af54125bbf6db407911ed3b",
                 new TelemetryConfiguration()
@@ -109,7 +109,7 @@ namespace Unigram
                                  WindowsCollectors.UnhandledException
                 });
 
-#endif
+//#endif
         }
 
         /////// <summary>
