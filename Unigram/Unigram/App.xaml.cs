@@ -160,8 +160,8 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(BlankPage));
-            ////return Task.CompletedTask;
+            NavigationService.Navigate(typeof(PlaygroundPage2));
+            return Task.CompletedTask;
 
             //PhoneCallPage newPlayer = null;
             //CoreApplicationView newView = CoreApplication.CreateNewView();
@@ -258,11 +258,9 @@ namespace Unigram
             await VoIPConnection.Current.ConnectAsync();
             await Toast.RegisterBackgroundTasks();
 
-#if !DEBUG
             BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             ToastNotificationManager.History.Clear();
-#endif
 
 #if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>
