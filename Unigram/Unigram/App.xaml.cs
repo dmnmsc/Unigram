@@ -42,6 +42,7 @@ using System.Collections.Generic;
 using Unigram.Core.Services;
 using Template10.Controls;
 using Windows.Foundation;
+using libtgvoip;
 
 namespace Unigram
 {
@@ -160,6 +161,8 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            var aes = VoIPControllerWrapper.TestAesIge();
+
             //NavigationService.Navigate(typeof(PlaygroundPage2));
             //return Task.CompletedTask;
 
@@ -197,6 +200,7 @@ namespace Unigram
             {
                 var share = args as ShareTargetActivatedEventArgs;
                 var voice = args as VoiceCommandActivatedEventArgs;
+                var contact = args as ContactPanelActivatedEventArgs;
 
                 if (share != null)
                 {
@@ -221,6 +225,10 @@ namespace Unigram
                     {
                         NavigationService.Navigate(typeof(MainPage));
                     }
+                }
+                else if (contact != null)
+                {
+                    NavigationService.Navigate(typeof(MainPage), $"{{\"from_id\":{contact.Contact.RemoteId}}}");
                 }
                 else
                 {
