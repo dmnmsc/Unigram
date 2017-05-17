@@ -34,15 +34,16 @@
 
             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
 
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+
+
+
+
+
+
+            <StaticResource x:Key="TelegramBackgroundTitlebarBrushBase" ResourceKey="CommandBarBackground"/>
+            <SolidColorBrush x:Key="TelegramBackgroundTitlebarBrushDeactivated" Color="Black"/>
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
@@ -81,15 +82,17 @@
             <HorizontalAlignment x:Key="MessageHorizontalAlignment">Stretch</HorizontalAlignment>
 
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+
+
+
+
+
+
+
+            <StaticResource x:Key="TelegramBackgroundTitlebarBrushBase" ResourceKey="CommandBarBackground"/>
+            <SolidColorBrush x:Key="TelegramBackgroundTitlebarBrushDeactivated" Color="White"/>
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
