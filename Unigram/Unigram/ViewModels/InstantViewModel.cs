@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Views;
 
@@ -29,6 +30,28 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _gallery, value);
+            }
+        }
+
+        public RelayCommand<TLChannel> ChannelOpenCommand => new RelayCommand<TLChannel>(ChannelOpenExecute);
+        private void ChannelOpenExecute(TLChannel channel)
+        {
+            if (channel != null)
+            {
+                NavigationService.Navigate(typeof(DialogPage), channel.ToPeer());
+            }
+        }
+
+        public RelayCommand<TLChannel> ChannelJoinCommand => new RelayCommand<TLChannel>(ChannelJoinExecute);
+        private async void ChannelJoinExecute(TLChannel channel)
+        {
+            if (channel != null && channel.IsLeft)
+            {
+                var response = await ProtoService.JoinChannelAsync(channel);
+                if (response.IsSucceeded)
+                {
+                    channel.RaisePropertyChanged(() => channel.IsLeft);
+                }
             }
         }
 

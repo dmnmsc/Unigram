@@ -44,7 +44,12 @@ namespace Unigram.Themes
             this.InitializeComponent();
         }
 
-        private async void Photo_Click(object sender, RoutedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            Photo_Click(sender);
+        }
+
+        public static async void Photo_Click(object sender)
         {
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
@@ -101,20 +106,25 @@ namespace Unigram.Themes
             }
         }
 
-        private async void Download_Click(object sender, TransferCompletedEventArgs e)
+        private void Download_Click(object sender, TransferCompletedEventArgs e)
+        {
+            Download(sender, e);
+        }
+
+        public static async void Download(object sender, TransferCompletedEventArgs e)
         {
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;
-            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
-            if (bubble != null)
+
+            if (message != null)
             {
-                if (bubble.Context != null && message.IsVideo())
+                if (message.IsVideo() || message.IsRoundVideo())
                 {
-                    var media = bubble.FindName("MediaControl") as UIElement;
+                    var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
 
                     ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
 
-                    var viewModel = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
+                    var viewModel = new DialogPhotosViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
                     await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                     {
                         var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");

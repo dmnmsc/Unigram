@@ -35,6 +35,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Media.Animation;
 using Unigram.Controls.Views;
+using Telegram.Api.Services.Cache;
 
 namespace Unigram.Views
 {
@@ -189,6 +190,8 @@ namespace Unigram.Views
                     return ProcessAnchor(page, anchor, photos, videos);
                 case TLPageBlockPreformatted preformatted:
                     return ProcessPreformatted(page, preformatted, photos, videos);
+                case TLPageBlockChannel channel:
+                    return ProcessChannel(page, channel, photos, videos);
                 case TLPageBlockUnsupported unsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
@@ -200,6 +203,32 @@ namespace Unigram.Views
         private FrameworkElement ProcessCover(TLPageBase page, TLPageBlockCover block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             return ProcessBlock(page, block.Cover, photos, videos);
+        }
+
+        private FrameworkElement ProcessChannel(TLPageBase page, TLPageBlockChannel channel, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var chat = channel.Channel as TLChannel;
+            if (chat.IsMin)
+            {
+                chat = InMemoryCacheService.Current.GetChat(chat.Id) as TLChannel ?? channel.Channel as TLChannel;
+            }
+
+            var button = new Button
+            {
+                Style = Resources["ChannelBlockStyle"] as Style,
+                Content = chat
+            };
+
+            if (chat.IsMin && chat.HasUsername)
+            {
+                MTProtoService.Current.ResolveUsernameAsync(chat.Username,
+                    result =>
+                    {
+                        Execute.BeginOnUIThread(() => button.Content = result.Chats.FirstOrDefault());
+                    });
+            }
+
+            return button;
         }
 
         private FrameworkElement ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
@@ -798,7 +827,7 @@ namespace Unigram.Views
 
         private double SpacingBetweenBlocks(TLPageBlockBase upper, TLPageBlockBase lower)
         {
-            if (lower is TLPageBlockCover)
+            if (lower is TLPageBlockCover || lower is TLPageBlockChannel)
             {
                 return 0;
             }
@@ -918,7 +947,9 @@ namespace Unigram.Views
 
         private double PaddingForBlock(TLPageBlockBase block)
         {
-            if (block is TLPageBlockCover || block is TLPageBlockPreformatted)
+            if (block is TLPageBlockCover || block is TLPageBlockPreformatted ||
+                block is TLPageBlockPhoto || block is TLPageBlockVideo ||
+                block is TLPageBlockSlideshow || block is TLPageBlockChannel)
             {
                 return 0.0;
             }

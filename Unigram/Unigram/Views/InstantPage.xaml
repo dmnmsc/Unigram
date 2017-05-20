@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -47,6 +48,35 @@
         <Style x:Key="BlockEmbedPostStyle" TargetType="StackPanel">
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             <Setter Property="BorderThickness" Value="2,0,0,0"/>
+        </Style>
+        
+        <DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{x:Bind DisplayName}" VerticalAlignment="Center" Padding="12,10"/>
+
+                <Button Content="JOIN"
+                        Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}, ConverterParameter=invert}"
+                        Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                        Background="Transparent"
+                        Padding="12,8"
+                        Grid.Column="1"/>
+                <FontIcon Visibility="{x:Bind Converter={StaticResource ChannelJoinedToVisibilityConverter}}"
+                          Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                          HorizontalAlignment="Right"
+                          Margin="12,0"
+                          Glyph="&#xE10B;"
+                          Grid.Column="1"/>
+            </Grid>
+        </DataTemplate>
+
+        <Style x:Key="ChannelBlockStyle" BasedOn="{StaticResource EmptyButtonStyle}" TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}"/>
+            <Setter Property="ContentTemplate" Value="{StaticResource ChannelItemTemplate}"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
         </Style>
     </Page.Resources>
 

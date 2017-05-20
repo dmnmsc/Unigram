@@ -43,17 +43,77 @@ namespace Telegram.Api.Helpers
         }
 #endif
 
-        public static byte[] GetRSABytes(byte[] bytes)
+        public static long GetRSAFingerprint(string key)
         {
-            var key =
-"-----BEGIN RSA PUBLIC KEY-----\n" +
-"MIIBCgKCAQEAwVACPi9w23mF3tBkdZz+zwrzKOaaQdr01vAbU4E1pvkfj4sqDsm6\n" +
-"lyDONS789sVoD/xCS9Y0hkkC3gtL1tSfTlgCMOOul9lcixlEKzwKENj1Yz/s7daS\n" +
-"an9tqw3bfUV/nqgbhGX81v/+7RFAEd+RwFnK7a+XYl9sluzHRyVVaTTveB2GazTw\n" +
-"Efzk2DWgkBluml8OREmvfraX3bkHZJTKX4EQSjBbbdJ2ZXIsRrYOXfaA+xayEGB+\n" +
-"8hdlLmAjbCVfaigxX0CDqWeR1yFL9kwd9P0NsZRPsmoqVwMbMu7mStFai6aIhc3n\n" +
-"Slv8kg9qv1m6XHVQY3PnEw+QQtqSIXklHwIDAQAB\n" +
-"-----END RSA PUBLIC KEY-----";
+            using (var text = new StringReader(key))
+            {
+                var reader = new PemReader(text);
+                var parameter = reader.ReadObject() as RsaKeyParameters;
+                if (parameter != null)
+                {
+                    var modulus = parameter.Modulus.ToByteArray();
+                    var exponent = parameter.Exponent.ToByteArray();
+
+                    if (modulus.Length > 256)
+                    {
+                        var corrected = new byte[256];
+                        System.Buffer.BlockCopy(modulus, modulus.Length - 256, corrected, 0, 256);
+
+                        modulus = corrected;
+                    }
+                    else if (modulus.Length < 256)
+                    {
+                        var corrected = new byte[256];
+                        System.Buffer.BlockCopy(modulus, 0, corrected, 256 - modulus.Length, modulus.Length);
+
+                        for (int a = 0; a < 256 - modulus.Length; a++)
+                        {
+                            modulus[a] = 0;
+                        }
+
+                        modulus = corrected;
+                    }
+
+                    using (var stream = new MemoryStream())
+                    {
+                        using (var writer = new TLBinaryWriter(stream))
+                        {
+                            writer.WriteByteArray(modulus);
+                            writer.WriteByteArray(exponent);
+                        }
+
+                        var hash = ComputeSHA1(stream.ToArray());
+                        var fingerprint = (((ulong)hash[19]) << 56) |
+                                          (((ulong)hash[18]) << 48) |
+                                          (((ulong)hash[17]) << 40) |
+                                          (((ulong)hash[16]) << 32) |
+                                          (((ulong)hash[15]) << 24) |
+                                          (((ulong)hash[14]) << 16) |
+                                          (((ulong)hash[13]) << 8) |
+                                          ((ulong)hash[12]);
+
+                        return (long)fingerprint;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
+        public static byte[] GetRSABytes(byte[] bytes, string key)
+        {
+            if (key == null)
+            {
+                key =
+    "-----BEGIN RSA PUBLIC KEY-----\n" +
+    "MIIBCgKCAQEAwVACPi9w23mF3tBkdZz+zwrzKOaaQdr01vAbU4E1pvkfj4sqDsm6\n" +
+    "lyDONS789sVoD/xCS9Y0hkkC3gtL1tSfTlgCMOOul9lcixlEKzwKENj1Yz/s7daS\n" +
+    "an9tqw3bfUV/nqgbhGX81v/+7RFAEd+RwFnK7a+XYl9sluzHRyVVaTTveB2GazTw\n" +
+    "Efzk2DWgkBluml8OREmvfraX3bkHZJTKX4EQSjBbbdJ2ZXIsRrYOXfaA+xayEGB+\n" +
+    "8hdlLmAjbCVfaigxX0CDqWeR1yFL9kwd9P0NsZRPsmoqVwMbMu7mStFai6aIhc3n\n" +
+    "Slv8kg9qv1m6XHVQY3PnEw+QQtqSIXklHwIDAQAB\n" +
+    "-----END RSA PUBLIC KEY-----";
+            }
 
             using (var text = new StringReader(key))
             {
@@ -566,6 +626,16 @@ namespace Telegram.Api.Helpers
             var hashed = hasher.HashData(input);
             byte[] digest;
             CryptographicBuffer.CopyToByteArray(hashed, out digest);
+
+            return digest;
+        }
+
+        public static string MD5(string data)
+        {
+            var input = CryptographicBuffer.ConvertStringToBinary(data, BinaryStringEncoding.Utf8);
+            var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+            var hashed = hasher.HashData(input);
+            var digest = CryptographicBuffer.EncodeToBase64String(hashed);
 
             return digest;
         }

@@ -127,6 +127,7 @@
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
     <Compile Include="Services\FileManager\DownloadablePart.cs" />
+    <Compile Include="Services\FileManager\DownloadOperation.cs" />
     <Compile Include="Services\FileManager\DownloadWebFileManager.cs" />
     <Compile Include="Services\FileManager\EventArgs\DownloadingCanceledEventArgs.cs" />
     <Compile Include="Services\FileManager\DownloadEncryptedFileManager.cs" />
@@ -134,6 +135,8 @@
     <Compile Include="Services\FileManager\EventArgs\UploadingCanceledEventArgs.cs" />
     <Compile Include="Services\FileManager\EventArgs\UploadProgressChangedEventArgs.cs" />
     <Compile Include="Services\FileManager\EventArgs\DownloadProgressChangedEventArgs.cs" />
+    <Compile Include="Services\FileManager\FileLoader.cs" />
+    <Compile Include="Services\FileManager\FileLoadOperation.cs" />
     <Compile Include="Services\FileManager\UploadableItem.cs" />
     <Compile Include="Services\FileManager\UploadablePart.cs" />
     <Compile Include="Services\FileManager\UploadManager.cs" />
@@ -254,6 +257,7 @@
     <Compile Include="TL\Methods\Contest\TLContestSaveDeveloperInfo.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetAppChangelog.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetAppUpdate.cs" />
+    <Compile Include="TL\Methods\Help\TLHelpGetCdnConfig.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetConfig.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetInviteText.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetNearestDC.cs" />
@@ -381,8 +385,10 @@
     <Compile Include="TL\Methods\Updates\TLUpdatesGetChannelDifference.cs" />
     <Compile Include="TL\Methods\Updates\TLUpdatesGetDifference.cs" />
     <Compile Include="TL\Methods\Updates\TLUpdatesGetState.cs" />
+    <Compile Include="TL\Methods\Upload\TLUploadGetCdnFile.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadGetFile.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadGetWebFile.cs" />
+    <Compile Include="TL\Methods\Upload\TLUploadReuploadCdnFile.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadSaveBigFilePart.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadSaveFilePart.cs" />
     <Compile Include="TL\Methods\Users\TLUsersGetFullUser.cs" />
@@ -546,6 +552,8 @@
     <Compile Include="TL\TLBotInlineMessageText.cs" />
     <Compile Include="TL\TLBotInlineResult.cs" />
     <Compile Include="TL\TLBotInlineResultBase.cs" />
+    <Compile Include="TL\TLCdnConfig.cs" />
+    <Compile Include="TL\TLCdnPublicKey.cs" />
     <Compile Include="TL\TLChannel.cs" />
     <Compile Include="TL\TLChannelForbidden.cs" />
     <Compile Include="TL\TLChannelFull.cs" />
@@ -749,6 +757,8 @@
     <Compile Include="TL\TLInputMessagesFilterPhotos.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotoVideo.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotoVideoDocuments.cs" />
+    <Compile Include="TL\TLInputMessagesFilterRoundVideo.cs" />
+    <Compile Include="TL\TLInputMessagesFilterRoundVoice.cs" />
     <Compile Include="TL\TLInputMessagesFilterUrl.cs" />
     <Compile Include="TL\TLInputMessagesFilterVideo.cs" />
     <Compile Include="TL\TLInputMessagesFilterVoice.cs" />
@@ -932,6 +942,7 @@
     <Compile Include="TL\TLPageBlockAuthorDate.cs" />
     <Compile Include="TL\TLPageBlockBase.cs" />
     <Compile Include="TL\TLPageBlockBlockquote.cs" />
+    <Compile Include="TL\TLPageBlockChannel.cs" />
     <Compile Include="TL\TLPageBlockCollage.cs" />
     <Compile Include="TL\TLPageBlockCover.cs" />
     <Compile Include="TL\TLPageBlockDivider.cs" />
@@ -1034,11 +1045,13 @@
     <Compile Include="TL\TLSendMessageGamePlayAction.cs" />
     <Compile Include="TL\TLSendMessageGeoLocationAction.cs" />
     <Compile Include="TL\TLSendMessageRecordAudioAction.cs" />
+    <Compile Include="TL\TLSendMessageRecordRoundAction.cs" />
     <Compile Include="TL\TLSendMessageRecordVideoAction.cs" />
     <Compile Include="TL\TLSendMessageTypingAction.cs" />
     <Compile Include="TL\TLSendMessageUploadAudioAction.cs" />
     <Compile Include="TL\TLSendMessageUploadDocumentAction.cs" />
     <Compile Include="TL\TLSendMessageUploadPhotoAction.cs" />
+    <Compile Include="TL\TLSendMessageUploadRoundAction.cs" />
     <Compile Include="TL\TLSendMessageUploadVideoAction.cs" />
     <Compile Include="TL\TLServerDHInnerData.cs" />
     <Compile Include="TL\TLServerDHParamsBase.cs" />
@@ -1160,7 +1173,12 @@
     <Compile Include="TL\TLUpdateUserStatus.cs" />
     <Compile Include="TL\TLUpdateUserTyping.cs" />
     <Compile Include="TL\TLUpdateWebPage.cs" />
+    <Compile Include="TL\TLUploadCdnFile.cs" />
+    <Compile Include="TL\TLUploadCdnFileBase.cs" />
+    <Compile Include="TL\TLUploadCdnFileReuploadNeeded.cs" />
     <Compile Include="TL\TLUploadFile.cs" />
+    <Compile Include="TL\TLUploadFileBase.cs" />
+    <Compile Include="TL\TLUploadFileCdnRedirect.cs" />
     <Compile Include="TL\TLUploadWebFile.cs" />
     <Compile Include="TL\TLUser.cs" />
     <Compile Include="TL\TLUserBase.cs" />
