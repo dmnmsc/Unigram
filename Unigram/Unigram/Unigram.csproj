@@ -133,6 +133,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Behaviors\AspectRatioBehavior.cs" />
+    <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
     <Compile Include="Common\ImageLoader\ManagedSurface.cs" />
@@ -145,6 +146,9 @@
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
+    <Compile Include="Controls\InstantView\InstantViewSlideshow.xaml.cs">
+      <DependentUpon>InstantViewSlideshow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
@@ -358,6 +362,11 @@
     <Compile Include="Views\UsersSelectionPage.xaml.cs">
       <DependentUpon>UsersSelectionPage.xaml</DependentUpon>
     </Compile>
+    <Content Include="Assets\Audio\voip_busy.mp3" />
+    <Content Include="Assets\Audio\voip_connecting.mp3" />
+    <Content Include="Assets\Audio\voip_end.mp3" />
+    <Content Include="Assets\Audio\voip_failed.mp3" />
+    <Content Include="Assets\Audio\voip_ringback.mp3" />
     <Content Include="Assets\Emojis\0030-20e3.png" />
     <Content Include="Assets\Emojis\0031-20e3.png" />
     <Content Include="Assets\Emojis\0032-20e3.png" />
@@ -846,7 +855,7 @@
     </Compile>
     <Compile Include="ViewModels\Chats\ChatDetailsViewModel.cs" />
     <Compile Include="ViewModels\ContactsViewModel.cs" />
-    <Compile Include="ViewModels\DialogPhotosViewModel.cs" />
+    <Compile Include="ViewModels\DialogGalleryViewModel.cs" />
     <Compile Include="ViewModels\DialogsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogSendLocationViewModel.cs" />
@@ -1097,6 +1106,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Inline\InlineBotResultsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\InstantView\InstantViewSlideshow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

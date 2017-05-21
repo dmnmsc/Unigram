@@ -82,6 +82,11 @@ namespace Unigram.Tasks
             _mediator = null;
             _current = null;
 
+            if (VoIPServiceTask.Connection != null)
+            {
+                var mediator = Mediator;
+            }
+
             VoIPCallTask.Log("Releasing background task", "Releasing VoIPCallTask");
 
             _deferral.Complete();
@@ -130,6 +135,7 @@ namespace Unigram.Tasks
 
         private VoipPhoneCall _systemCall;
         private TLPhoneCallBase _phoneCall;
+        private TLInputPhoneCall _peer;
         private TLPhoneCallState _state;
         private TLUserBase _user;
         private string[] _emojis;
@@ -239,6 +245,8 @@ namespace Unigram.Tasks
 
                 if (update.PhoneCall is TLPhoneCallRequested requested)
                 {
+                    _peer = requested.ToInputPhoneCall();
+
                     var req = new TLPhoneReceivedCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash } };
 
                     const string caption = "phone.receivedCall";
@@ -271,7 +279,24 @@ namespace Unigram.Tasks
                 }
                 else if (update.PhoneCall is TLPhoneCallDiscarded discarded)
                 {
-                    _phoneCall = discarded;
+                    if (false)
+                    {
+                        discarded.IsNeedRating = true;
+                    }
+
+                    if (discarded.IsNeedRating)
+                    {
+                        await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.setCallRating" }, { "request", TLSerializationService.Current.Serialize(_peer) } });
+                    }
+
+                    if (discarded.IsNeedDebug)
+                    {
+                        var req = new TLPhoneSaveCallDebug();
+                        req.Debug = new TLDataJSON { Data = _controller.GetDebugLog() };
+                        req.Peer = _peer;
+
+                        await SendRequestAsync<bool>("phone.saveCallDebug", req);
+                    }
 
                     await UpdateStateAsync(TLPhoneCallState.Ended);
 
@@ -279,6 +304,12 @@ namespace Unigram.Tasks
                     {
                         _controller.Dispose();
                         _controller = null;
+                    }
+
+                    if (_connection != null)
+                    {
+                        _connection.RequestReceived -= OnRequestReceived;
+                        _connection = null;
                     }
 
                     if (_systemCall != null)
@@ -330,7 +361,6 @@ namespace Unigram.Tasks
                     if (response.IsSucceeded)
                     {
                         _systemCall.NotifyCallActive();
-
                         Handle(new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall });
                     }
                 }
@@ -398,6 +428,8 @@ namespace Unigram.Tasks
                 }
                 else if (update.PhoneCall is TLPhoneCallWaiting waiting)
                 {
+                    _peer = waiting.ToInputPhoneCall();
+
                     if (_state == TLPhoneCallState.Waiting && waiting.HasReceiveDate && waiting.ReceiveDate != 0)
                     {
                         await UpdateStateAsync(TLPhoneCallState.Ringing);
@@ -487,10 +519,10 @@ namespace Unigram.Tasks
                     var response = await SendRequestAsync<TLPhonePhoneCall>("phone.acceptCall", request);
                     if (response.IsSucceeded)
                     {
+                        _systemCall.NotifyCallActive();
+                        Handle(new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall });
                     }
                 }
-
-                _systemCall.NotifyCallActive();
             }
         }
 
@@ -560,7 +592,18 @@ namespace Unigram.Tasks
                 var req = new TLPhoneDiscardCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash }, Reason = new TLPhoneCallDiscardReasonBusy() };
 
                 const string caption = "phone.discardCall";
-                await SendRequestAsync<TLUpdatesBase>(caption, req);
+                var response = await SendRequestAsync<TLUpdatesBase>(caption, req);
+                if (response.IsSucceeded)
+                {
+                    if (response.Result is TLUpdates updates)
+                    {
+                        var update = updates.Updates.FirstOrDefault(x => x is TLUpdatePhoneCall) as TLUpdatePhoneCall;
+                        if (update != null)
+                        {
+                            Handle(update);
+                        }
+                    }
+                }
 
                 _systemCall.NotifyCallEnded();
             }
@@ -624,7 +667,18 @@ namespace Unigram.Tasks
                         var req = new TLTuple<double>(reader);
                         reader.Dispose();
 
-                        var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = new TLPhoneCallDiscardReasonHangup(), Duration = (int)req.Item1 };
+                        TLPhoneCallDiscardReasonBase reason;
+                        switch (_phoneCall)
+                        {
+                            case TLPhoneCallWaiting waiting:
+                                reason = new TLPhoneCallDiscardReasonBusy();
+                                break;
+                            default:
+                                reason = new TLPhoneCallDiscardReasonHangup();
+                                break;
+                        }
+
+                        var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = reason, Duration = (int)req.Item1 };
 
                         const string caption2 = "phone.discardCall";
                         var response = await SendRequestAsync<TLUpdatesBase>(caption2, req2);
@@ -646,6 +700,16 @@ namespace Unigram.Tasks
                     if (_controller != null)
                     {
                         _controller.SetMicMute(caption.Equals("phone.mute"));
+
+                        var coordinator = VoipCallCoordinator.GetDefault();
+                        if (caption.Equals("phone.mute"))
+                        {
+                            coordinator.NotifyMuted();
+                        }
+                        else
+                        {
+                            coordinator.NotifyUnmuted();
+                        }
                     }
                 }
                 else if (caption.Equals("voip.startCall"))

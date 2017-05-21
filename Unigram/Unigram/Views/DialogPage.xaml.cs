@@ -217,6 +217,8 @@ namespace Unigram.Views
 
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+
+            txtMessage.Focus(FocusState.Keyboard);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -872,6 +874,8 @@ namespace Unigram.Views
                 //DetachTextAreaExpression();
             };
             batch.End();
+
+            ViewModel.OutputTypingManager.SetTyping(new TLSendMessageRecordAudioAction());
         }
 
         private void VoiceButton_RecordingStopped(object sender, EventArgs e)
@@ -918,6 +922,8 @@ namespace Unigram.Views
                 _elapsedVisual.Offset = point;
             };
             batch.End();
+
+            ViewModel.OutputTypingManager.CancelTyping();
         }
 
         private void VoiceButton_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)

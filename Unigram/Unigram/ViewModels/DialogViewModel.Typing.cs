@@ -45,17 +45,25 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _inputTypingManager = (_inputTypingManager ?? new InputTypingManager((users) =>
+                return _inputTypingManager = _inputTypingManager ?? new InputTypingManager(users =>
                 {
                     TypingSubtitle = GetTypingSubtitle(users);
                     IsTyping = true;
-                    //this.Subtitle = this.GetTypingSubtitle(users);
                 }, 
 				() =>
                 {
+                    TypingSubtitle = null;
                     IsTyping = false;
-                    //this.Subtitle = this.GetSubtitle();
-                }));
+                });
+            }
+        }
+
+        private OutputTypingManager _outputTypingManager;
+        public OutputTypingManager OutputTypingManager
+        {
+            get
+            {
+                return _outputTypingManager = _outputTypingManager ?? new OutputTypingManager(ProtoService, Peer);
             }
         }
 
@@ -96,7 +104,7 @@ namespace Unigram.ViewModels
             return GetTypingString(Peer.ToPeer(), typingUsers, new Func<int?, TLUserBase>(CacheService.GetUser), null);
         }
 
-        public static string GetTypingString(TLPeerBase peer, IList<Tuple<int, TLSendMessageActionBase>> typingUsers, Func<int?, TLUserBase> getUser, Action<TLPeerBase> getFullInfoAction)
+        public string GetTypingString(TLPeerBase peer, IList<Tuple<int, TLSendMessageActionBase>> typingUsers, Func<int?, TLUserBase> getUser, Action<TLPeerBase> getFullInfoAction)
         {
             if (peer is TLPeerUser)
             {
@@ -116,7 +124,7 @@ namespace Unigram.ViewModels
                     {
                         return AppResources.SendingAudio;
                     }
-                    else if (action is TLSendMessageUploadDocumentAction)
+                    else if (action is TLSendMessageUploadDocumentAction actionz)
                     {
                         return AppResources.SendingFile;
                     }
