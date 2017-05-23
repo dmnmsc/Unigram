@@ -11,20 +11,20 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Margin="{ThemeResource MessageContentMargin}"
-    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
-    MaxWidth="432">
+    Margin="{ThemeResource MessageContentMargin}" 
+    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+    <!--//MaxWidth="432"-->
 
     <!-- TODO: not the right way -->
     <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"
-              Padding="{ThemeResource MessageContentPadding}"
+              Padding="{ThemeResource MessageContentPadding}" 
               CornerRadius="{ThemeResource MessageCornerRadius}"
               Background="{ThemeResource MessageBackgroundBrush}"
               BorderBrush="{ThemeResource MessageBorderBrush}"
-              BorderThickness="0,0,0,2">
+              BorderThickness="1,1,1,1">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="FullMedia">
@@ -45,22 +45,22 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="HeaderLabel"
+            <TextBlock x:Name="HeaderLabel" 
                        Margin="0,0,0,2"
-                       Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                       Foreground="{ThemeResource MessageHeaderForegroundBrush}" 
                        RequestedTheme="{ThemeResource MessageTextBlockTheme}"
                        Style="{ThemeResource CaptionTextBlockStyle}"
                        FontWeight="SemiBold"
                        Visibility="Collapsed"
                        Grid.Row="0"/>
 
-            <local:MessageReference
+            <local:MessageReference 
                 Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                 Click="Reply_Click"
                 Grid.Row="1"/>
 
-            <RichTextBlock
+            <RichTextBlock 
                 x:Name="MessageControl"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
                 Style="{ThemeResource BodyRichTextBlockStyle}"
@@ -75,13 +75,13 @@
             <controls:MediaControl
                 x:Name="MediaControl"
                 Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
-                HorizontalContentAlignment="Stretch"
+                HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Stretch"
                 ContentChanged="OnMediaChanged"
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
 
-            <local:MessageStatusControl
+            <local:MessageStatusControl 
                 x:Name="StatusControl"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
