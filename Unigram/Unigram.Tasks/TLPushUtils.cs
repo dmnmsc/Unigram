@@ -208,34 +208,33 @@ namespace Unigram.Tasks
 
         public static void AddToast(string caption, string message, string sound, string launch, TLPushCustom custom, string tag, string group)
         {
-            var actions = string.Empty;
-            if (custom?.from_id != null || custom?.channel_id != null || custom?.chat_id != null)
-            {
-                  //{string.Join("\r\n", custom.GetInputs())}
-                actions = $@"
-                <actions>
-                  <input id='QuickMessage' type='text' placeHolderContent='Type a message...' />
-                  <action activationType='background' arguments='{WebUtility.HtmlEncode(launch)}' hint-inputId='QuickMessage' content='Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/>
-                </actions>";
+            //var actions = string.Empty;
+            //if (custom?.from_id != null || custom?.channel_id != null || custom?.chat_id != null)
+            //{
+            //{string.Join("\r\n", custom.GetInputs())}
+            //actions = $@"
+            //   < actions >
+            //    < input id='QuickMessage' type='text' placeHolderContent='Type a message...' />
+            //    < action activationType='background' arguments='{WebUtility.HtmlEncode(launch)}' hint-inputId='QuickMessage' content='Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/>
+            //  </ actions>";
+            //
+            //}
 
-            }
+            //<image placement='appLogoOverride' hint-crop='circle' src='ms-appx:///Assets/Logos/Placeholder/Placeholder-2.png' />
+            //var xml = $@"
+            //  < toast launch='{WebUtility.HtmlEncode(launch)}'>
+            //< visual >
+            //< binding template='ToastGeneric'>
+            //< text >{WebUtility.HtmlEncode(caption) ?? string.Empty}</text>
+            //< text >{WebUtility.HtmlEncode(message) ?? string.Empty}</text>
+            //< text placement='attribution'>Unigram</text>
+            //</visual>
+            //{ actions}
+            //</ toast>";
 
-                        //<image placement='appLogoOverride' hint-crop='circle' src='ms-appx:///Assets/Logos/Placeholder/Placeholder-2.png' />
-            var xml = $@"
-                <toast launch='{WebUtility.HtmlEncode(launch)}'>
-                    <visual>
-                      <binding template='ToastGeneric'>
-                        <text>{WebUtility.HtmlEncode(caption) ?? string.Empty}</text>
-                        <text>{WebUtility.HtmlEncode(message) ?? string.Empty}</text>
-                        <text placement='attribution'>Unigram</text>
-                      </binding>
-                    </visual>
-                    {actions}
-               </toast>";
-
-            var notifier = ToastNotificationManager.CreateToastNotifier("App");
-            var document = new XmlDocument();
-            document.LoadXml(xml);
+            //         var notifier = ToastNotificationManager.CreateToastNotifier("App");
+            //var document = new XmlDocument();
+            //document.LoadXml(xml);
 
             //SetText(document, caption, message);
             //SetLaunch(document, launch);
@@ -245,16 +244,16 @@ namespace Unigram.Tasks
             //    SetSound(document, sound);
             //}
 
-            try
-            {
-                var notification = new ToastNotification(document);
+            //try
+            //{
+            //    var notification = new ToastNotification(document);
 
-                if (tag != null) notification.Tag = tag;
-                if (group != null) notification.Group = group;
+            //    if (tag != null) notification.Tag = tag;
+            //    if (group != null) notification.Group = group;
 
-                notifier.Show(notification);
-            }
-            catch { }
+            //    notifier.Show(notification);
+            //}
+            //catch { }
         }
 
         private static void RemoveToastGroup(string groupname)
