@@ -12,7 +12,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Margin="{ThemeResource MessageContentMargin}" 
-    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
+    HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
     <!--//MaxWidth="432"-->
     <local:MessageBubbleBase.RowDefinitions>
     <RowDefinition Height="Auto"/>
