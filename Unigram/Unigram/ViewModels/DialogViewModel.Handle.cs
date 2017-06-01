@@ -473,7 +473,7 @@ namespace Unigram.ViewModels
             });
         }
 
-#if DEBUG
+//#if DEBUG
         [DllImport("user32.dll")]
         public static extern Boolean GetLastInputInfo(ref LASTINPUTINFO plii);
         public struct LASTINPUTINFO
@@ -481,7 +481,7 @@ namespace Unigram.ViewModels
             public uint cbSize;
             public Int32 dwTime;
         }
-#endif
+//#endif
 
         private void MarkAsRead(TLMessageCommonBase messageCommon)
         {
@@ -495,7 +495,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-#if DEBUG
+//#if DEBUG
             if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Desktop"))
             {
                 LASTINPUTINFO lastInput = new LASTINPUTINFO();
@@ -511,7 +511,7 @@ namespace Unigram.ViewModels
                     }
                 }
             }
-#endif
+//#endif
 
             if (messageCommon != null && !messageCommon.IsOut && messageCommon.IsUnread)
             {
