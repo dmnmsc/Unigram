@@ -6,7 +6,7 @@ The Telegram client for the Windows 10 platform, built by the community for the 
 ## Build instructions
 1. First, check that you have the [necessary tools](#requirements) installed.
 2. Go to <https://my.telegram.org/apps> and register a new app.
-3. Clone the repo `git clone https://github.com/UnigramDev/Unigram.git`.
+3. Clone the repo `git clone --recursive https://github.com/UnigramDev/Unigram.git`.
 4. Create a new file inside `Unigram/Unigram/Unigram.Api` and name it `Constants.Secret.cs`: 
 ```csharp
 namespace Telegram.Api
@@ -69,6 +69,17 @@ Get updates on Unigram's development and chat with the project maintainers and c
 * Like and follow [Unigram on Facebook](https://www.facebook.com/UnigramApp/).
 * Join the official group [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ).
 * Join the official channel [Unigram News](https://t.me/unigram).
+
+## Special thanks
+We want to especially thank these people for their help and knowledge while building Unigram
+
+**Telegram Desktop**
+
+- <https://twitter.com/telegramdesktop>
+
+**Gregory Klyushnikov**
+
+- <https://github.com/grishka>
 
 ## License
 Copyright © 2016-2017 [Unigram Authors](https://github.com/UnigramDev/Unigram/graphs/contributors).
