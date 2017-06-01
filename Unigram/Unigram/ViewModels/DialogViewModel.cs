@@ -270,9 +270,12 @@ namespace Unigram.ViewModels
 
         public async Task LoadNextSliceAsync()
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
-            _isLoadingNextSlice = true;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
+            {
+                return;
+            }
 
+            _isLoadingNextSlice = true;
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
@@ -329,9 +332,12 @@ namespace Unigram.ViewModels
 
         public async Task LoadPreviousSliceAsync()
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
-            _isLoadingPreviousSlice = true;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
+            {
+                return;
+            }
 
+            _isLoadingPreviousSlice = true;
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
@@ -382,6 +388,7 @@ namespace Unigram.ViewModels
             }
 
             _isLoadingPreviousSlice = false;
+            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
         }
 
         public RelayCommand PreviousSliceCommand => new RelayCommand(PreviousSliceExecute);
@@ -852,11 +859,6 @@ namespace Unigram.ViewModels
                 IsReportSpam = settings.Result.IsReportSpam;
             }
 
-            LastSeen = await GetSubtitle();
-
-            //#if !DEBUG
-            //#endif
-
             if (dialog != null && Messages.Count > 0)
             {
                 var unread = dialog.UnreadCount;
@@ -876,16 +878,12 @@ namespace Unigram.ViewModels
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
             }
 
-            //StickersRecent();
-            //GifsSaved();
-
-            //var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
-            //await FileIO.WriteTextAsync(file, DateTime.Now.ToString());
-
             if (App.InMemoryState.ForwardMessages != null)
             {
                 Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.InMemoryState.ForwardMessages) };
             }
+
+            LastSeen = await GetSubtitle();
         }
 
         private async void ShowPinnedMessage(TLChannel channel)
