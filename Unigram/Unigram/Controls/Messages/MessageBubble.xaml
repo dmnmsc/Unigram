@@ -27,7 +27,7 @@
     <!-- TODO: not the right way -->
     <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
-    <UserControl x:Name="LayoutRoot">
+    <UserControl x:Name="LayoutRoot" Grid.Row="1">
         <Grid x:Name="ContentPanel"
               Padding="{ThemeResource MessageContentPadding}" 
               CornerRadius="{ThemeResource MessageCornerRadius}"
@@ -69,17 +69,17 @@
                 Click="Reply_Click"
                 Grid.Row="1"/>
 
-            <RichTextBlock 
+            <TextBlock 
                 x:Name="MessageControl"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
                 ContextRequested="MessageControl_ContextRequested"
                 Grid.Row="2">
-                <RichTextBlock.Resources>
+                <TextBlock.Resources>
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                </RichTextBlock.Resources>
-            </RichTextBlock>
+                </TextBlock.Resources>
+            </TextBlock>
 
             <controls:MediaControl
                 x:Name="MediaControl"
