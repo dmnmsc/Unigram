@@ -209,7 +209,7 @@
                         <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                     </StackPanel>
 
-                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -245,7 +245,7 @@
                         <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                     </StackPanel>
 
-                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
@@ -321,7 +321,7 @@
                             <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                         </StackPanel>
 
-                        <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                     </Grid>
 
                     <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
@@ -396,7 +396,7 @@
                         MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
                         MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"/>
 
-                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -423,7 +423,7 @@
                         MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
                         MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"/>
 
-                    <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
@@ -490,7 +490,7 @@
                             MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
                             MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"/>
 
-                        <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                     </Grid>
 
                     <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
@@ -1045,7 +1045,24 @@
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
                 <ListView.Header>
-                    <Border Height="4"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Visibility="{x:Bind ConvertBotInfo(ViewModel.FullUser.HasBotInfo, ViewModel.IsLastSliceLoaded), Mode=OneWay, FallbackValue=Collapsed}"
+                                    Padding="{ThemeResource MessageContentPadding}"
+                                    Background="{ThemeResource MessageBackgroundBrush}"
+                                    BorderBrush="{ThemeResource MessageBorderBrush}"
+                                    BorderThickness="0,0,0,2"
+                                    VerticalAlignment="Center"
+                                    MaxWidth="360"
+                                    Margin="12,12,12,8">
+                            <TextBlock Text="What can this bot do?" Margin="0,0,0,4" Style="{StaticResource BaseTextBlockStyle}"/>
+                            <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.FullUser.BotInfo.Description, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
+                        </StackPanel>
+                        <Border Height="4" Grid.Row="1"/>
+                    </Grid>
                 </ListView.Header>
                 <ListView.Footer>
                     <Border Height="8"/>
@@ -1431,12 +1448,14 @@
         </ContentControl>
 
         <controls:BubbleBottomButton
-                TextArea="{x:Bind TextArea, Mode=OneWay}"
-                With="{x:Bind ViewModel.With, Mode=OneWay}"
-                ToggleMuteCommand="{x:Bind ViewModel.ToggleMuteCommand}"
-                DeleteAndExitCommand="{x:Bind ViewModel.DialogDeleteCommand}"
-                JoinCommand="{x:Bind ViewModel.JoinChannelCommand}"
-                UnblockCommand="{x:Bind ViewModel.UnblockCommand}"
-                Grid.Row="3"/>
+            TextArea="{x:Bind TextArea, Mode=OneWay}"
+            With="{x:Bind ViewModel.With, Mode=OneWay}"
+            HasAccessToken="{x:Bind ViewModel.HasAccessToken, Mode=OneWay}"
+            ToggleMuteCommand="{x:Bind ViewModel.ToggleMuteCommand}"
+            DeleteAndExitCommand="{x:Bind ViewModel.DialogDeleteCommand}"
+            JoinCommand="{x:Bind ViewModel.JoinChannelCommand}"
+            UnblockCommand="{x:Bind ViewModel.UnblockCommand}"
+            StartCommand="{x:Bind ViewModel.StartCommand}"
+            Grid.Row="3"/>
     </Grid>
 </Page>
