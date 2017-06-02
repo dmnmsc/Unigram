@@ -72,9 +72,8 @@
             <TextBlock 
                 x:Name="MessageControl"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
-                Style="{ThemeResource BodyRichTextBlockStyle}"
+                Style="{ThemeResource BodyTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
-                ContextRequested="MessageControl_ContextRequested"
                 Grid.Row="2">
                 <TextBlock.Resources>
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
