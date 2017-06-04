@@ -579,7 +579,6 @@ namespace Unigram.ViewModels
                 if (response.Result.Messages.Count < limit)
                 {
                     IsFirstSliceLoaded = true;
-                    UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 }
             }
 
@@ -1377,7 +1376,10 @@ namespace Unigram.ViewModels
             message.Entities = entities != null ? new TLVector<TLMessageEntityBase>(entities) : null;
             message.HasEntities = entities != null;
 
-            MessageHelper.PreprocessEntities(ref message);
+            if (message.Entities == null)
+            {
+                MessageHelper.PreprocessEntities(ref message);
+            }
 
             var channel = With as TLChannel;
             if (channel != null && channel.IsBroadcast)
